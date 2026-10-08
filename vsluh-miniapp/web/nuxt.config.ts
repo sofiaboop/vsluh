@@ -2,7 +2,9 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
-  devtools: { enabled: true },
+
+  // devtools доустанавливает зависимости в рантайме и ломает npm ci
+  devtools: { enabled: false },
 
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt', '@nuxtjs/google-fonts'],
 
