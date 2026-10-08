@@ -3,19 +3,19 @@ export type SpeakingMode = 'spontaneous' | 'deep'
 export interface ModeOption {
   id: SpeakingMode
   label: string
-  hint: string
+  duration: string
 }
 
 export const MODES: ModeOption[] = [
   {
     id: 'spontaneous',
     label: 'спонтанно',
-    hint: 'У вас будет 30 секунд подготовки, чтобы говорить 1 минуту',
+    duration: 'У вас будет 30 секунд подготовки, чтобы говорить 1 минуту',
   },
   {
     id: 'deep',
     label: 'глубоко',
-    hint: 'У вас будет 2 минуты подготовки, чтобы говорить 3 минуты',
+    duration: 'У вас будет 10 минут подготовки, чтобы говорить 2 минуты',
   },
 ]
 
@@ -35,6 +35,13 @@ export const TOPICS: Topic[] = [
   { id: 'unexpected', label: 'Неожиданное' },
 ]
 
-export const MOOD_HINT =
-  'К теме добавится случайное настроение — например «с иронией» или «с нежностью». ' +
-  'Так проще уйти от заученных формулировок.'
+export const MOOD_TOOLTIP =
+  'Сайт задаст случайную манеру подачи — от «максимально серьёзно» до «как будто рассказываешь секрет».'
+
+export const SUPPORT = {
+  title: 'Помоги «Вслух» расти',
+  text: 'Если этот тренажёр оказался тебе полезен, ты можешь поддержать его развитие любой суммой.',
+  payUrl: 'https://pay.cloudtips.ru/p/c76e8470',
+  authorUrl: 'https://www.instagram.com/gurl_sonya',
+  authorHandle: '@gurl_sonya',
+}

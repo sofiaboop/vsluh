@@ -12,7 +12,6 @@ export default defineNuxtConfig({
 
   devServer: { host: '127.0.0.1', port: 3000 },
 
-  // FSD: ui-слои фич и сущностей регистрируются автоматически
   components: [
     { path: '~/components', pathPrefix: false },
     { path: '~/widgets', pathPrefix: false },
@@ -20,8 +19,9 @@ export default defineNuxtConfig({
     { path: '~/entities', pathPrefix: false, pattern: '**/ui/**/*.vue' },
   ],
 
+  // Набор начертаний — ровно как в макете
   googleFonts: {
-    families: { Manrope: [400, 500, 600, 700, 800] },
+    families: { Manrope: [400, 500, 600, 700] },
     display: 'swap',
     preload: true,
   },
@@ -31,8 +31,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl,
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || '',
-      miniAppUrl: process.env.NUXT_PUBLIC_MINIAPP_URL || '',
       appVersion: process.env.NUXT_PUBLIC_APP_VERSION || 'local',
     },
   },
@@ -40,19 +38,19 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'ru' },
-      title: 'ВСЛУХ — сервис развития речи',
+      title: 'ВСЛУХ | Сервис развития речи',
       meta: [
-        { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { charset: 'UTF-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         {
           name: 'description',
           content:
             'ВСЛУХ — тренажёр спонтанной речи. 30 секунд на подготовку, минута, чтобы говорить. Выбирай темы и практикуйся каждый день.',
         },
-        { name: 'theme-color', content: '#F3F6FA' },
+        { name: 'theme-color', content: '#f3f6fa' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'ВСЛУХ' },
-        { property: 'og:title', content: 'ВСЛУХ — сервис развития речи' },
+        { property: 'og:title', content: 'ВСЛУХ | Сервис развития речи' },
         {
           property: 'og:description',
           content: '30 секунд на подготовку, минута, чтобы говорить. Практика спонтанной речи.',
@@ -65,7 +63,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // Статика в S3/CloudFront
   nitro: {
     preset: 'static',
     prerender: { crawlLinks: true, routes: ['/'] },
