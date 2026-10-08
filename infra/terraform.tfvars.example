@@ -1,4 +1,0 @@
-environment        = "prod"
-aws_region         = "eu-central-1"
-root_domain        = "vsluh.club"
-cloudflare_zone_id = "" # Cloudflare → Overview → Zone ID

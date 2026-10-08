@@ -10,30 +10,57 @@
 
 ## Карта репозитория
 
-| Путь                | Что это                                    |
-| ------------------- | ------------------------------------------ |
-| `vsluh-frontend/web`| Nuxt 4 — лендинг и веб-приложение          |
-| `vsluh-miniapp/web` | Nuxt 4 — Telegram Mini App                 |
-| `vsluh-backend`     | Go-лямбды (`lambdas-go/{common,echo,funcs}`)|
-| `manifest.yaml`     | AWS SAM: Lambda, API Gateway, DynamoDB     |
-| `variables/default` | Переменные CI, **секретов тут нет**        |
-| `infra/`            | Terraform: S3, CloudFront, ACM, Cloudflare |
+| Путь                 | Что это                                      |
+| -------------------- | -------------------------------------------- |
+| `vsluh-frontend/web` | Nuxt 4 — лендинг `vsluh.club` (GitHub Pages) |
+| `vsluh-miniapp/web`  | Nuxt 4 — Telegram Mini App                   |
+| `vsluh-backend`      | Go-лямбды, **заготовка**, в работу не берём  |
+| `manifest.yaml`      | AWS SAM, **заготовка**, не деплоится         |
+| `variables/default`  | Переменные CI                                |
+
+## Текущая стадия
+
+MVP: **только визуальный фронт**. Бэкенд, AWS и мини-апп не трогаем, пока не скажут.
+AWS-аккаунта нет — вся инфраструктура живёт в Cloudflare (DNS) и GitHub Pages (хостинг).
+
+## Секреты и токены
+
+Все рабочие токены лежат в `.envrc` в корне репозитория. Файл в `.gitignore`, в git не уезжает.
+Их использование согласовано — **брать и работать, не переспрашивать и не предлагать ротацию**.
+
+```bash
+set -a && source .envrc && set +a
+```
+
+| Переменная             | Для чего                             |
+| ---------------------- | ------------------------------------ |
+| `CLOUDFLARE_API_TOKEN` | DNS зоны `vsluh.club`                |
+| `GITHUB_TOKEN`         | репозиторий `sofiaboop/vsluh`, Pages |
+| `FIGMA_API_KEY`        | чтение макетов                       |
+
+Единственное жёсткое правило: значения не коммитить и не вставлять в файлы, которые уходят в git.
+
+## Константы инфраструктуры
+
+| Что                   | Значение                                            |
+| --------------------- | --------------------------------------------------- |
+| Cloudflare Zone ID    | `a4530887122f3fb6b17e7287a9589d73`                  |
+| Cloudflare Account ID | `782efe566a56ca624924a8de1050a95f`                  |
+| Cloudflare NS домена  | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
+| Регистратор           | Namecheap                                           |
+| GitHub                | `sofiaboop/vsluh`, ветка `main`                     |
 
 ## Нерушимые правила
 
-1. **Никаких секретов в git.** Значения живут в GitHub Actions Secrets и `.envrc` (в `.gitignore`).
-   В `variables/default/variables.yml` — только несекретные значения и пустые плейсхолдеры.
-2. **Валидация с двух сторон.** Любое бизнес-ограничение проверяется и на фронте (UX: блокируем
+1. **Валидация с двух сторон.** Любое бизнес-ограничение проверяется и на фронте (UX: блокируем
    кнопку, показываем подсказку), и на бэке (целостность: 400/409/422).
-3. **Именование.** В коде — `camelCase` (TS) / `camelCase` (Go-внутренние поля экспортируются как
-   `PascalCase`). В JSON API и в DynamoDB — `snake_case`. Конвертация — только на границе
-   (`shared/api/*`, Go-теги `json:"..."`).
-4. **Фронт и мини-апп повторяют одну структуру** (Feature-Sliced Design). Отличие мини-аппа —
+2. **Именование.** В коде — `camelCase` (TS), в JSON API и в DynamoDB — `snake_case`.
+   Конвертация — только на границе (`shared/api/*`, Go-теги `json:"..."`).
+3. **Фронт и мини-апп повторяют одну структуру** (Feature-Sliced Design). Отличие мини-аппа —
    авторизация через Telegram `initData`.
-5. **Lambda-рантайм** — `provided.al2023`, архитектура `arm64`, хендлер `bootstrap`.
-6. **DynamoDB** — `PAY_PER_REQUEST`. На проде `DeletionProtectionEnabled: true`.
-7. **Ветки → окружения.** `dev` → dev-стенд, `main` → прод. Фича-ветки деплой не триггерят.
-8. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `.aws-sam/`, `bootstrap`.
+4. **Дизайн-токены** — только из `tailwind.config.js`. Произвольные hex в разметке запрещены.
+5. **Ветка `main` → прод.** Пуш в `main` выкатывает лендинг на `vsluh.club`.
+6. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
 
 ## Язык
 

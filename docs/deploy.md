@@ -1,76 +1,71 @@
 # Деплой
 
-## Окружения
+## Схема
 
-| Ветка  | Окружение | Лендинг             | Mini App                | API                   |
-| ------ | --------- | ------------------- | ----------------------- | --------------------- |
-| `dev`  | dev       | `dev.vsluh.club`    | `app-dev.vsluh.club`    | `api-dev.vsluh.club`  |
-| `main` | prod      | `vsluh.club`        | `app.vsluh.club`        | `api.vsluh.club`      |
+```
+git push main  →  GitHub Actions (npm run generate)  →  GitHub Pages  →  vsluh.club
+                                                            ↑
+                                                   Cloudflare DNS (зона vsluh.club)
+```
 
-Фича-ветки деплой не триггерят — только CI.
+AWS не используется — аккаунта нет. `manifest.yaml` и `vsluh-backend/` лежат заготовкой.
 
-## Что нужно один раз
+## Константы
 
-1. **AWS**: аккаунт, IAM-пользователь для деплоя (S3, CloudFront, CloudFormation, Lambda,
-   API Gateway, DynamoDB), ACM-сертификат на `*.vsluh.club` в `us-east-1` (требование CloudFront).
-2. **Cloudflare**: зона `vsluh.club`, API-токен с правами `Zone:DNS:Edit` для этой зоны.
-3. **Terraform**: `cd infra && terraform init && terraform apply` — создаёт S3-бакеты,
-   CloudFront-дистрибутивы и DNS-записи.
-4. **GitHub**: окружения `dev` и `prod`, в каждом переменные и секреты (ниже).
+| Что                   | Значение                                            |
+| --------------------- | --------------------------------------------------- |
+| Репозиторий           | `sofiaboop/vsluh`, ветка `main`                     |
+| Cloudflare Zone ID    | `a4530887122f3fb6b17e7287a9589d73`                  |
+| Cloudflare Account ID | `782efe566a56ca624924a8de1050a95f`                  |
+| NS для регистратора   | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
 
-## Переменные окружений GitHub
+## DNS
 
-Variables (не секреты):
+Апекс `vsluh.club` указывает на GitHub Pages четырьмя A-записями:
 
-| Имя                                   | Пример                          |
-| ------------------------------------- | ------------------------------- |
-| `AWS_REGION`                          | `eu-central-1`                  |
-| `SITE_URL`                            | `https://vsluh.club`            |
-| `API_URL`                             | `https://api.vsluh.club`        |
-| `MINIAPP_URL`                         | `https://app.vsluh.club`        |
-| `S3_BUCKET`                           | `vsluh-frontend-prod`           |
-| `CLOUDFRONT_DISTRIBUTION_ID`          | `E...`                          |
-| `MINIAPP_S3_BUCKET`                   | `vsluh-miniapp-prod`            |
-| `MINIAPP_CLOUDFRONT_DISTRIBUTION_ID`  | `E...`                          |
-| `BOT_NAME`                            | `vsluh_bot`                     |
-| `DELETION_PROTECTION_ENABLED`         | `true` на проде, `false` на dev |
-| `THROTTLING_RATE_LIMIT`               | `50`                            |
-| `THROTTLING_BURST_LIMIT`              | `100`                           |
+```
+185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153
+```
 
-Secrets:
+`www.vsluh.club` — `CNAME` на `sofiaboop.github.io`.
 
-| Имя                     | Что                                         |
-| ----------------------- | ------------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | ключ деплой-пользователя                    |
-| `AWS_SECRET_ACCESS_KEY` | секрет деплой-пользователя                  |
-| `TELEGRAM_BOT_TOKEN`    | токен бота, нужен для проверки `initData`   |
+Записи **не проксируются** Cloudflare (`proxied: false`): GitHub сам выпускает сертификат
+Let's Encrypt на апекс, а оранжевое облако мешает его верификации.
 
-> Долгоживущие AWS-ключи — временное решение. Как только дойдут руки, переключить
-> `configure-aws-credentials` на OIDC (`role-to-assume`) и ключи удалить.
+Кастомный домен зафиксирован файлом [vsluh-frontend/web/public/CNAME](../vsluh-frontend/web/public/CNAME) —
+он попадает в сборку, и GitHub Pages не теряет домен при редеплое.
 
-## Выкат
-
-Пуш в `dev` или `main` запускает нужные workflow по изменённым путям:
-
-- `vsluh-frontend/**` → `deploy-frontend.yml`
-- `vsluh-miniapp/**` → `deploy-miniapp.yml`
-- `vsluh-backend/**`, `manifest.yaml` → `deploy-backend.yml`
-
-Кэш: `_nuxt/*` заливается с `max-age=31536000, immutable`, остальное — с
-`no-cache, must-revalidate`, затем инвалидация CloudFront по HTML.
-
-## Ручной выкат статики
+## Выкат вручную
 
 ```bash
 cd vsluh-frontend/web
 NUXT_PUBLIC_SITE_URL=https://vsluh.club npm run generate
-aws s3 sync .output/public s3://vsluh-frontend-prod --delete
-aws cloudfront create-invalidation --distribution-id E... --paths "/" "/index.html"
+npx serve .output/public          # локальная проверка
 ```
 
-## Бэкенд локально
+Дальше достаточно пуша в `main` — workflow соберёт и выложит сам.
+
+## Диагностика
 
 ```bash
-cd vsluh-backend && make test-all
-sam build --template ../manifest.yaml && sam local start-api
+set -a && source .envrc && set +a
+ZONE=a4530887122f3fb6b17e7287a9589d73
+
+# статус зоны (active / pending)
+curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  "https://api.cloudflare.com/client/v4/zones/$ZONE" | python3 -m json.tool | head -20
+
+# что реально отдаёт DNS
+dig +short NS vsluh.club @1.1.1.1
+dig +short A vsluh.club @1.1.1.1
+
+# состояние GitHub Pages
+curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+  https://api.github.com/repos/sofiaboop/vsluh/pages | python3 -m json.tool
 ```
+
+Зона в статусе `pending` означает, что NS у регистратора ещё не переключены на Cloudflare —
+домен не будет резолвиться нигде, сколько бы записей ни стояло внутри зоны.

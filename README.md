@@ -6,36 +6,30 @@
 
 ```
 vsluh/
-├── .github/                  # Copilot-инструкции (L1/L2) + GitHub Actions
-├── docs/                     # L3: архитектура, плейбуки, деплой
-├── variables/default/        # Переменные окружения для CI (без секретов)
-├── manifest.yaml             # AWS SAM: Lambda + API Gateway + DynamoDB
-├── vsluh-backend/            # Go-лямбды (go.work, lambdas-go/*)
-├── vsluh-frontend/web/       # Nuxt 4 — публичный лендинг/веб-приложение (vsluh.club)
-└── vsluh-miniapp/web/        # Nuxt 4 — Telegram Mini App (app.vsluh.club)
+├── .github/                  # Правила (L1/L2) + GitHub Actions
+├── docs/                     # L3: архитектура, деплой, дизайн
+├── variables/default/        # Переменные CI
+├── manifest.yaml             # AWS SAM — заготовка, не деплоится
+├── vsluh-backend/            # Go-лямбды — заготовка, в работу не взята
+├── vsluh-frontend/web/       # Nuxt 4 — лендинг vsluh.club
+└── vsluh-miniapp/web/        # Nuxt 4 — Telegram Mini App (заготовка)
 ```
 
-## Домены
+## Стадия
 
-| Домен             | Назначение                     | Хостинг                  |
-| ----------------- | ------------------------------ | ------------------------ |
-| `vsluh.club`      | Лендинг / веб-приложение       | S3 + CloudFront (Cloudflare DNS) |
-| `app.vsluh.club`  | Telegram Mini App              | S3 + CloudFront          |
-| `api.vsluh.club`  | REST API (Go Lambda)           | API Gateway + ACM        |
+MVP: только визуальный лендинг. Бэкенда и AWS нет.
+Хостинг — GitHub Pages, DNS — Cloudflare.
 
-## Быстрый старт
+## Локально
 
 ```bash
-nvm use                       # Node 22
+nvm use                                   # Node 22
 cd vsluh-frontend/web && npm ci && npm run dev
 ```
 
-Бэкенд:
+Секреты: `set -a && source .envrc && set +a`.
 
-```bash
-cd vsluh-backend && make deps && make test-all
-```
+## Деплой
 
-## Документация
-
-Точка входа — [docs/README.md](docs/README.md).
+Пуш в `main` → [deploy-pages.yml](.github/workflows/deploy-pages.yml) → `vsluh.club`.
+Подробности — [docs/deploy.md](docs/deploy.md).
