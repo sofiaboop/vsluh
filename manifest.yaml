@@ -1,0 +1,159 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: ВСЛУХ — REST API (Go Lambda + API Gateway + DynamoDB)
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: vsluh
+  Environment:
+    Type: String
+    AllowedValues: [dev, prod]
+  AppVersion:
+    Type: String
+    Default: local
+  TelegramBotToken:
+    Type: String
+    NoEcho: true
+    Default: ''
+  DeletionProtectionEnabled:
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'false'
+  ThrottlingRateLimit:
+    Type: Number
+    Default: 50
+  ThrottlingBurstLimit:
+    Type: Number
+    Default: 100
+
+Globals:
+  Function:
+    Runtime: provided.al2023
+    Handler: bootstrap
+    Architectures: [arm64]
+    Timeout: 10
+    MemorySize: 128
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+        APP_VERSION: !Ref AppVersion
+    Tags:
+      Product: !Ref ProjectName
+      Environment: !Ref Environment
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${ProjectName}-${Environment}-api'
+      StageName: !Ref Environment
+      EndpointConfiguration:
+        Type: REGIONAL
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Telegram-Init-Data'"
+        AllowOrigin: "'*'"
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingRateLimit: !Ref ThrottlingRateLimit
+          ThrottlingBurstLimit: !Ref ThrottlingBurstLimit
+
+  SessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-${Environment}-sessions'
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: !Ref DeletionProtectionEnabled
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: session_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: session_id
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+      Tags:
+        - Key: Product
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  QuestionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-${Environment}-questions'
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: !Ref DeletionProtectionEnabled
+      AttributeDefinitions:
+        - AttributeName: topic_id
+          AttributeType: S
+        - AttributeName: question_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: topic_id
+          KeyType: HASH
+        - AttributeName: question_id
+          KeyType: RANGE
+      Tags:
+        - Key: Product
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  EchoFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      FunctionName: !Sub '${ProjectName}-${Environment}-echo'
+      CodeUri: vsluh-backend/lambdas-go/echo/
+      Events:
+        Health:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /echo
+            Method: GET
+
+  FuncsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      FunctionName: !Sub '${ProjectName}-${Environment}-funcs'
+      CodeUri: vsluh-backend/lambdas-go/funcs/
+      MemorySize: 256
+      Timeout: 30
+      Environment:
+        Variables:
+          DYNAMODB_SESSIONS_TABLE_NAME: !Ref SessionsTable
+          DYNAMODB_QUESTIONS_TABLE_NAME: !Ref QuestionsTable
+          TELEGRAM_BOT_TOKEN: !Ref TelegramBotToken
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref QuestionsTable
+      Events:
+        Proxy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: Базовый URL API
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  SessionsTableName:
+    Value: !Ref SessionsTable
+  QuestionsTableName:
+    Value: !Ref QuestionsTable

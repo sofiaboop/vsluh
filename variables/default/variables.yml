@@ -1,0 +1,42 @@
+# Несекретные переменные CI. Секреты — только в GitHub Actions Secrets под теми же именами.
+# Формат: USER_{BACKEND|FRONTEND|MINIAPP}_{DEV|PROD}_{KEY}
+
+common:
+  NODE_VERSION: '22'
+  GO_VERSION: '1.24'
+  PACKET_MANAGER_TYPE: npm
+  AWS_REGION: eu-central-1
+  PROJECT_NAME: vsluh
+
+backend:
+  USER_BACKEND_DEV_ENVIRONMENT: dev
+  USER_BACKEND_DEV_DELETION_PROTECTION_ENABLED: 'false'
+  USER_BACKEND_DEV_THROTTLING_RATE_LIMIT: '20'
+  USER_BACKEND_DEV_THROTTLING_BURST_LIMIT: '40'
+  USER_BACKEND_DEV_TELEGRAM_BOT_TOKEN: '' # секрет, заполняется из GH Secrets
+
+  USER_BACKEND_PROD_ENVIRONMENT: prod
+  USER_BACKEND_PROD_DELETION_PROTECTION_ENABLED: 'true'
+  USER_BACKEND_PROD_THROTTLING_RATE_LIMIT: '50'
+  USER_BACKEND_PROD_THROTTLING_BURST_LIMIT: '100'
+  USER_BACKEND_PROD_TELEGRAM_BOT_TOKEN: '' # секрет, заполняется из GH Secrets
+
+frontend:
+  USER_FRONTEND_DEV_SITE_URL: https://dev.vsluh.club
+  USER_FRONTEND_DEV_API_URL: https://api-dev.vsluh.club
+  USER_FRONTEND_DEV_MINIAPP_URL: https://app-dev.vsluh.club
+  USER_FRONTEND_DEV_S3_BUCKET: vsluh-frontend-dev
+
+  USER_FRONTEND_PROD_SITE_URL: https://vsluh.club
+  USER_FRONTEND_PROD_API_URL: https://api.vsluh.club
+  USER_FRONTEND_PROD_MINIAPP_URL: https://app.vsluh.club
+  USER_FRONTEND_PROD_S3_BUCKET: vsluh-frontend-prod
+
+miniapp:
+  USER_MINIAPP_DEV_API_URL: https://api-dev.vsluh.club
+  USER_MINIAPP_DEV_BOT_NAME: vsluh_dev_bot
+  USER_MINIAPP_DEV_S3_BUCKET: vsluh-miniapp-dev
+
+  USER_MINIAPP_PROD_API_URL: https://api.vsluh.club
+  USER_MINIAPP_PROD_BOT_NAME: vsluh_bot
+  USER_MINIAPP_PROD_S3_BUCKET: vsluh-miniapp-prod

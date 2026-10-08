@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-glow/60 ring-offset-2 ring-offset-canvas;
+  }
+}
+
+@layer components {
+  .chip {
+    @apply inline-flex h-11 select-none items-center justify-center rounded-pill border
+           border-chip bg-chip px-[17px] text-sm font-medium text-ink shadow-chip
+           backdrop-blur-sm transition-all duration-200;
+  }
+
+  .chip:hover {
+    @apply -translate-y-0.5 shadow-chipHover;
+  }
+
+  .chip--active {
+    @apply border-brand-border bg-chip-active text-brand-strong;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

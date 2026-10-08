@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+
+# Build output
+.nuxt/
+.output/
+dist
+dist/
+.data/
+bootstrap
+
+# Go
+*.test
+*.out
+go.work.sum
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
+packaged.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+.envrc
+!.envrc.example
+*.pem
+*.key
+
+# Editors / OS
+.DS_Store
+.idea/
+*.log
+.vscode/*
+!.vscode/extensions.json
