@@ -69,3 +69,34 @@ curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
 
 Зона в статусе `pending` означает, что NS у регистратора ещё не переключены на Cloudflare —
 домен не будет резолвиться нигде, сколько бы записей ни стояло внутри зоны.
+
+## DNSSEC
+
+Если `dig A vsluh.club @1.1.1.1` отдаёт **SERVFAIL**, а `dig +cd` (без валидации) отвечает
+нормально — значит сломана цепочка DNSSEC: в зоне `.club` лежит DS-запись, а зона на
+новых NS не подписана теми же ключами.
+
+Так было при переезде с Namecheap на Cloudflare: DS от старого провайдера остался,
+Cloudflare-зона была неподписана → все валидирующие резолверы (1.1.1.1, 8.8.8.8) отдавали
+SERVFAIL, а домен выглядел «не прописавшимся».
+
+Лечение — согласовать DS с реальным подписантом:
+
+```bash
+# включить подпись на стороне Cloudflare и забрать DS
+curl -s -X PATCH -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  "https://api.cloudflare.com/client/v4/zones/$ZONE/dnssec" --data '{"status":"active"}'
+```
+
+Полученные `key_tag`, `algorithm`, `digest_type`, `digest` вносятся в раздел DNSSEC у
+регистратора **вместо** старой DS. Альтернатива — просто удалить DNSSEC у регистратора;
+домен заработает, но останется без подписи.
+
+Проверка, что цепочка сошлась:
+
+```bash
+dig DS vsluh.club @a.nic.club +short     # key tag должен совпасть с Cloudflare
+dig +short A vsluh.club @1.1.1.1         # должен вернуть IP, а не пустоту
+```
+
