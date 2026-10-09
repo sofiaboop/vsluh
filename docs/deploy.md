@@ -3,10 +3,15 @@
 ## Схема
 
 ```
-git push main  →  GitHub Actions (npm run generate)  →  GitHub Pages  →  vsluh.club
-                                                            ↑
-                                                   Cloudflare DNS (зона vsluh.club)
+git push main → GitHub Actions (npm run generate) → GitHub Pages
+                                                         ↑
+                                 Cloudflare (proxy, TLS) ┘
+                                          ↑
+                                     vsluh.club
 ```
+
+Cloudflare проксирует трафик и терминирует TLS своим сертификатом.
+До GitHub Pages запрос идёт отдельным соединением по HTTPS (режим `Full`).
 
 AWS не используется — аккаунта нет. `manifest.yaml` и `vsluh-backend/` лежат заготовкой.
 
@@ -17,36 +22,43 @@ AWS не используется — аккаунта нет. `manifest.yaml` �
 | Репозиторий           | `sofiaboop/vsluh`, ветка `main`                     |
 | Cloudflare Zone ID    | `a4530887122f3fb6b17e7287a9589d73`                  |
 | Cloudflare Account ID | `782efe566a56ca624924a8de1050a95f`                  |
-| NS для регистратора   | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
+| NS у регистратора     | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
+| DS-запись (DNSSEC)    | key tag `2371`, alg `13`, digest type `2`           |
 
 ## DNS
 
-Апекс `vsluh.club` указывает на GitHub Pages четырьмя A-записями:
+Все записи **проксируются** Cloudflare (`proxied: true`):
 
 ```
-185.199.108.153
-185.199.109.153
-185.199.110.153
-185.199.111.153
+A      vsluh.club      → 185.199.108.153 / .109.153 / .110.153 / .111.153
+CNAME  www.vsluh.club  → sofiaboop.github.io
 ```
 
-`www.vsluh.club` — `CNAME` на `sofiaboop.github.io`.
+Настройки зоны:
 
-Записи **не проксируются** Cloudflare (`proxied: false`): GitHub сам выпускает сертификат
-Let's Encrypt на апекс, а оранжевое облако мешает его верификации.
+| Настройка          | Значение | Зачем                                   |
+| ------------------ | -------- | --------------------------------------- |
+| SSL mode           | `full`   | до origin тоже по HTTPS                 |
+| Universal SSL      | on       | сертификат Let's Encrypt от Cloudflare  |
+| Always Use HTTPS   | on       | редирект `http` → `https`               |
+| Minimum TLS        | `1.2`    | отсекаем устаревшие протоколы           |
 
-Кастомный домен зафиксирован файлом [vsluh-frontend/web/public/CNAME](../vsluh-frontend/web/public/CNAME) —
-он попадает в сборку, и GitHub Pages не теряет домен при редеплое.
+> `Always Use HTTPS` включать **только после** выпуска сертификата. Иначе
+> посетители уедут на нерабочий протокол и сайт ляжет целиком.
 
-## Выкат вручную
+## Выкат
+
+Пуш в `main` → [deploy-pages.yml](../.github/workflows/deploy-pages.yml) собирает
+`vsluh-frontend/web` и публикует в Pages. Кастомный домен задан в настройках Pages,
+файла `CNAME` в репозитории нет намеренно: в артефакте он переустанавливает домен
+при каждом деплое и сбрасывает выпуск сертификата.
+
+Локальная проверка сборки:
 
 ```bash
-cd vsluh-frontend/web
-NUXT_PUBLIC_SITE_URL=https://vsluh.club npm run generate
-npx serve .output/public          # локальная проверка
+cd vsluh-frontend/web && npm ci && npm run generate
+npx serve .output/public
 ```
-
-Дальше достаточно пуша в `main` — workflow соберёт и выложит сам.
 
 ## Диагностика
 
@@ -54,49 +66,34 @@ npx serve .output/public          # локальная проверка
 set -a && source .envrc && set +a
 ZONE=a4530887122f3fb6b17e7287a9589d73
 
-# статус зоны (active / pending)
+# сертификат, который реально отдаётся
+echo | openssl s_client -connect vsluh.club:443 -servername vsluh.club 2>/dev/null \
+  | openssl x509 -noout -subject -issuer -dates
+
+# статус пакета сертификатов Cloudflare
 curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  "https://api.cloudflare.com/client/v4/zones/$ZONE" | python3 -m json.tool | head -20
+  "https://api.cloudflare.com/client/v4/zones/$ZONE/ssl/certificate_packs?status=all"
 
-# что реально отдаёт DNS
-dig +short NS vsluh.club @1.1.1.1
-dig +short A vsluh.club @1.1.1.1
-
-# состояние GitHub Pages
-curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-  https://api.github.com/repos/sofiaboop/vsluh/pages | python3 -m json.tool
+# что мешает валидации
+curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  "https://api.cloudflare.com/client/v4/zones/$ZONE/ssl/verification"
 ```
 
-Зона в статусе `pending` означает, что NS у регистратора ещё не переключены на Cloudflare —
-домен не будет резолвиться нигде, сколько бы записей ни стояло внутри зоны.
+## Грабли, на которые уже наступили
 
-## DNSSEC
+**SERVFAIL при резолве.** В реестре `.club` висела DS-запись от прежнего подписанта
+(key tag `30543`), а зона на Cloudflare была неподписана — цепочка DNSSEC рвалась,
+и валидирующие резолверы (1.1.1.1, 8.8.8.8) отдавали SERVFAIL. Лечится согласованием
+DS с реальным подписантом. Признак: `dig +cd` отвечает, обычный `dig` — нет.
 
-Если `dig A vsluh.club @1.1.1.1` отдаёт **SERVFAIL**, а `dig +cd` (без валидации) отвечает
-нормально — значит сломана цепочка DNSSEC: в зоне `.club` лежит DS-запись, а зона на
-новых NS не подписана теми же ключами.
+**Панель регистратора врёт.** В Namecheap DNSSEC показывался выключенным, хотя DS
+в реестре присутствовала. Проверять только через `dig DS vsluh.club @a.nic.club`
+и `whois` (реестр и регистратор отвечают разными строками).
 
-Так было при переезде с Namecheap на Cloudflare: DS от старого провайдера остался,
-Cloudflare-зона была неподписана → все валидирующие резолверы (1.1.1.1, 8.8.8.8) отдавали
-SERVFAIL, а домен выглядел «не прописавшимся».
+**Выпуск сертификата нельзя торопить.** Каждый перезапуск ACME засчитывается
+Let's Encrypt как неудачная валидация; после пяти за час домен блокируется.
+Если статус `pending_validation` или `bad_authz` — ждать, не дёргая.
 
-Лечение — согласовать DS с реальным подписантом:
-
-```bash
-# включить подпись на стороне Cloudflare и забрать DS
-curl -s -X PATCH -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  "https://api.cloudflare.com/client/v4/zones/$ZONE/dnssec" --data '{"status":"active"}'
-```
-
-Полученные `key_tag`, `algorithm`, `digest_type`, `digest` вносятся в раздел DNSSEC у
-регистратора **вместо** старой DS. Альтернатива — просто удалить DNSSEC у регистратора;
-домен заработает, но останется без подписи.
-
-Проверка, что цепочка сошлась:
-
-```bash
-dig DS vsluh.club @a.nic.club +short     # key tag должен совпасть с Cloudflare
-dig +short A vsluh.club @1.1.1.1         # должен вернуть IP, а не пустоту
-```
-
+**Сертификат выпустится только после починки DNS.** И Cloudflare, и GitHub
+проверяют владение доменом через DNS. Пока домен не резолвится, выпуск будет
+падать бесконечно, сколько ни перезапускай.

@@ -19,8 +19,8 @@
 
 ## Текущая стадия
 
-MVP: **только визуальный фронт**. Бэкенд, AWS и мини-апп не трогаем, пока не скажут.
-AWS-аккаунта нет — вся инфраструктура живёт в Cloudflare (DNS) и GitHub Pages (хостинг).
+MVP: **только фронт**. Бэкенд и AWS не трогаем, пока не скажут.
+AWS-аккаунта нет — хостинг на GitHub Pages, сверху Cloudflare (DNS + прокси + TLS).
 
 ## Секреты и токены
 
@@ -46,6 +46,7 @@ set -a && source .envrc && set +a
 | Cloudflare Zone ID    | `a4530887122f3fb6b17e7287a9589d73`                  |
 | Cloudflare Account ID | `782efe566a56ca624924a8de1050a95f`                  |
 | Cloudflare NS домена  | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
+| DS-запись (DNSSEC)    | key tag `2371`, alg `13`, digest type `2`           |
 | Регистратор           | Namecheap                                           |
 | GitHub                | `sofiaboop/vsluh`, ветка `main`                     |
 
