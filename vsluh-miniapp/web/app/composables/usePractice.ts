@@ -1,5 +1,6 @@
 import { MODES, MOODS, TOPICS, WHEEL, type SpeakingMode, type TopicId } from '~/shared/constants/practice'
 import { QUESTIONS } from '~/shared/data/questions'
+import { playStop } from '~/shared/lib/sound'
 
 export type Stage = 'topics' | 'wheel' | 'prepare' | 'speak' | 'finished'
 
@@ -13,7 +14,8 @@ function pick<T>(list: T[]): T {
 }
 
 // Таймеры живут на уровне модуля: экран-инициатор размонтируется раньше, чем они отработают
-let spinTimer: ReturnType<typeof setTimeout> | undefined
+let startDelay: ReturnType<typeof setTimeout> | undefined
+let spinFallback: ReturnType<typeof setTimeout> | undefined
 let tick: ReturnType<typeof setInterval> | undefined
 
 export function usePractice() {
@@ -26,6 +28,8 @@ export function usePractice() {
   const rows = useState<WheelRow[]>('practice-rows', () => [])
   const spinning = useState('practice-spinning', () => false)
   const settled = useState('practice-settled', () => false)
+  // какая строка подсвечена: пока барабан крутится, она догоняет центр
+  const selectedIndex = useState('practice-selected-index', () => WHEEL.startIndex)
 
   const remaining = useState('practice-remaining', () => 0)
   const paused = useState('practice-paused', () => false)
@@ -34,7 +38,6 @@ export function usePractice() {
   const allSelected = computed(() => selected.value.length === TOPICS.length)
   const canContinue = computed(() => selected.value.length > 0)
   const chosen = computed<WheelRow | null>(() => rows.value[WHEEL.selectedIndex] ?? null)
-
   const totalSec = computed(() =>
     stage.value === 'speak' ? modeOption.value.speakSec : modeOption.value.prepareSec,
   )
@@ -62,22 +65,42 @@ export function usePractice() {
   }
 
   function spin() {
+    if (spinning.value) return
     rows.value = buildRows()
     mood.value = moodEnabled.value ? pick(MOODS) : ''
+    selectedIndex.value = WHEEL.startIndex
     settled.value = false
     spinning.value = true
 
-    clearTimeout(spinTimer)
-    spinTimer = setTimeout(() => {
-      spinning.value = false
-      settled.value = true
-    }, WHEEL.spinMs)
+    // в фоновой вкладке анимация не доигрывает и animationend не приходит
+    clearTimeout(spinFallback)
+    spinFallback = setTimeout(finishSpin, WHEEL.spinMs + 400)
+  }
+
+  /** Барабан доехал: фиксируем выбор и даём финальный аккорд. */
+  function finishSpin() {
+    if (!spinning.value) return
+    clearTimeout(spinFallback)
+    selectedIndex.value = WHEEL.selectedIndex
+    settled.value = true
+    spinning.value = false
+    playStop()
+  }
+
+  /** Подсветка строки, проехавшей центр. */
+  function highlight(index: number) {
+    selectedIndex.value = Math.min(index, WHEEL.selectedIndex)
   }
 
   function startWheel() {
     if (!canContinue.value) return
     stage.value = 'wheel'
-    spin()
+    rows.value = buildRows()
+    selectedIndex.value = WHEEL.startIndex
+    settled.value = false
+    // короткая пауза, чтобы экран успел появиться до старта барабана
+    clearTimeout(startDelay)
+    startDelay = setTimeout(spin, 220)
   }
 
   function stopTimer() {
@@ -121,7 +144,8 @@ export function usePractice() {
 
   function backToTopics() {
     stopTimer()
-    clearTimeout(spinTimer)
+    clearTimeout(startDelay)
+    clearTimeout(spinFallback)
     spinning.value = false
     settled.value = false
     stage.value = 'topics'
@@ -129,8 +153,8 @@ export function usePractice() {
 
   /** Новый вопрос по тем же темам. */
   function again() {
-    stage.value = 'wheel'
-    spin()
+    stopTimer()
+    startWheel()
   }
 
   /** Тот же вопрос ещё раз. */
@@ -147,6 +171,7 @@ export function usePractice() {
     rows,
     spinning,
     settled,
+    selectedIndex,
     remaining,
     paused,
     modeOption,
@@ -158,6 +183,8 @@ export function usePractice() {
     toggleAll,
     startWheel,
     spin,
+    finishSpin,
+    highlight,
     startPrepare,
     startSpeak,
     finish,
