@@ -28,12 +28,14 @@
 ## Компоненты
 
 ```
-vsluh.club        Nuxt (статика, S3+CloudFront)  →  лендинг и веб-версия
-app.vsluh.club    Nuxt (статика, S3+CloudFront)  →  Telegram Mini App
-api.vsluh.club    API Gateway → Go Lambda        →  REST API
+vsluh.club        Nuxt (статика, GitHub Pages)  →  лендинг и Telegram Mini App
+api.vsluh.club    API Gateway → Go Lambda         →  REST API (заготовка)
                                     ↓
                                 DynamoDB
 ```
+
+Одна сборка обслуживает оба сценария: внутри Telegram приложение подхватывает `initData`
+и подстраивает интерфейс, в обычном браузере работает как лендинг.
 
 ## API
 

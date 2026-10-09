@@ -24,19 +24,8 @@ backend:
 frontend:
   USER_FRONTEND_DEV_SITE_URL: https://dev.vsluh.club
   USER_FRONTEND_DEV_API_URL: https://api-dev.vsluh.club
-  USER_FRONTEND_DEV_MINIAPP_URL: https://app-dev.vsluh.club
-  USER_FRONTEND_DEV_S3_BUCKET: vsluh-frontend-dev
+  USER_FRONTEND_DEV_BOT_NAME: vsluh_dev_bot
 
   USER_FRONTEND_PROD_SITE_URL: https://vsluh.club
   USER_FRONTEND_PROD_API_URL: https://api.vsluh.club
-  USER_FRONTEND_PROD_MINIAPP_URL: https://app.vsluh.club
-  USER_FRONTEND_PROD_S3_BUCKET: vsluh-frontend-prod
-
-miniapp:
-  USER_MINIAPP_DEV_API_URL: https://api-dev.vsluh.club
-  USER_MINIAPP_DEV_BOT_NAME: vsluh_dev_bot
-  USER_MINIAPP_DEV_S3_BUCKET: vsluh-miniapp-dev
-
-  USER_MINIAPP_PROD_API_URL: https://api.vsluh.club
-  USER_MINIAPP_PROD_BOT_NAME: vsluh_bot
-  USER_MINIAPP_PROD_S3_BUCKET: vsluh-miniapp-prod
+  USER_FRONTEND_PROD_BOT_NAME: vsluh_bot

@@ -1029,6 +1029,11 @@ h1 {
   font-size: 9px;
 }
 
+/* Внутри Telegram свой заголовок окна — наш футер лишний */
+.is-telegram .footer {
+  display: none;
+}
+
 @media (width <= 680px) {
   .screen--topics .selection-content {
     justify-content: center;

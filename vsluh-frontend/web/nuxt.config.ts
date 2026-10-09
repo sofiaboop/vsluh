@@ -31,6 +31,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl,
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || '',
+      botName: process.env.NUXT_PUBLIC_BOT_NAME || '',
       appVersion: process.env.NUXT_PUBLIC_APP_VERSION || 'local',
     },
   },

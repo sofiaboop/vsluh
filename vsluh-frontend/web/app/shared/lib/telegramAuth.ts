@@ -1,4 +1,4 @@
-// initData хранится вне Pinia: он нужен раньше, чем инициализируются сторы.
+// initData нужен раньше, чем инициализируются сторы, поэтому живёт в модуле.
 let initData = ''
 
 export function setInitData(raw: string): void {
