@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SUPPORT } from '~/shared/constants/practice'
 
+const { backToTopics } = usePractice()
 const supportOpen = ref(false)
 
 function close() {
@@ -18,7 +19,7 @@ onMounted(() => {
 
 <template>
   <header class="topbar">
-    <button aria-label="На главную" class="brand" type="button">
+    <button aria-label="На главную" class="brand" type="button" @click="backToTopics">
       <span class="brand-mark"><span /></span>
       <span>ВСЛУХ</span>
     </button>
