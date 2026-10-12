@@ -1,8 +1,11 @@
 <script setup lang="ts">
+const { t, tm, rt } = useI18n()
 const {
   stage,
+  mode,
   chosen,
-  mood,
+  moodIndex,
+  analysisEnabled,
   remaining,
   paused,
   timerAngle,
@@ -13,6 +16,16 @@ const {
 } = usePractice()
 
 const isSpeak = computed(() => stage.value === 'speak')
+const isDeep = computed(() => mode.value === 'deep')
+
+const mood = computed(() => {
+  if (moodIndex.value === null) return ''
+  const option = (tm('mood.options') as unknown[])[moodIndex.value]
+  return option ? rt(option as string) : ''
+})
+
+const topicRef = ref<HTMLElement | null>(null)
+useFitText(topicRef, () => [chosen.value?.question, stage.value], { fillScreen: true })
 
 const clock = computed(() => {
   const total = Math.max(0, remaining.value)
@@ -23,10 +36,14 @@ const clock = computed(() => {
 </script>
 
 <template>
-  <section class="content timer-screen">
-    <div class="step-label">{{ isSpeak ? '04 / ГОВОРИ' : '03 / ПОДГОТОВКА' }}</div>
+  <section class="content timer-screen" :class="{ 'timer-screen--deep': isDeep }">
+    <div class="step-label">{{ isSpeak ? t('steps.speak') : t('steps.prepare') }}</div>
 
-    <p class="prepare-topic">{{ chosen?.question }}</p>
+    <p ref="topicRef" class="prepare-topic prepare-topic--deep">{{ chosen?.question }}</p>
+
+    <p v-if="isDeep && !isSpeak" class="deep-prepare-description">
+      {{ t('modes.deep.prepareNote') }}
+    </p>
 
     <div class="timer-panel" :class="isSpeak ? 'timer-panel--speak' : 'timer-panel--prepare'">
       <div class="timer-content">
@@ -37,14 +54,24 @@ const clock = computed(() => {
             :style="{ '--timer-angle': `${timerAngle}deg` }"
           />
           <div class="timer-display-content">
-            <div class="timer-value" :aria-label="`Осталось ${clock}`">{{ clock }}</div>
-            <div class="timer-caption">
-              {{ isSpeak ? 'Говори' : 'Подумай, что хочешь сказать' }}
+            <div class="timer-value" :aria-label="t('timer.remaining', { time: clock })">
+              {{ clock }}
+            </div>
+            <div v-if="!isDeep || isSpeak" class="timer-caption">
+              {{ isSpeak ? t('timer.speakCaption') : t('timer.prepareCaption') }}
             </div>
           </div>
         </div>
-        <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
+        <div v-if="!isDeep && (mood || analysisEnabled)" class="timer-indicators">
+          <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
+          <AnalysisStatus v-if="analysisEnabled" :variant="isSpeak ? 'recording' : 'planned'" />
+        </div>
       </div>
+    </div>
+
+    <div v-if="isDeep && (mood || analysisEnabled)" class="timer-footer-indicators">
+      <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
+      <AnalysisStatus v-if="analysisEnabled" :variant="isSpeak ? 'recording' : 'planned'" />
     </div>
 
     <div class="timer-actions">
@@ -53,13 +80,13 @@ const clock = computed(() => {
         class="action-button action-button--primary"
         @click="isSpeak ? finish() : startSpeak()"
       >
-        {{ isSpeak ? 'Закончить' : 'Говорить сейчас' }}
+        {{ isSpeak ? t('timer.finish') : t('timer.speakNow') }}
       </button>
       <button type="button" class="action-button action-button--secondary" @click="togglePause">
-        {{ paused ? 'Продолжить' : 'Пауза' }}
+        {{ paused ? t('timer.resume') : t('timer.pause') }}
       </button>
       <button type="button" class="action-button action-button--tertiary" @click="backToTopics">
-        Закрыть
+        {{ t('timer.close') }}
       </button>
     </div>
   </section>

@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Ana sayfa", "support": "Destek ol" },
+  "footer": "Konuşma pratiği",
+  "language": { "label": "Dil", "switch": "Dili değiştir" },
+  "modes": {
+    "spontaneous": {
+      "label": "doğaçlama",
+      "duration": "Hazırlanmak için 30 saniyen, konuşmak için 1 dakikan var",
+      "heading": "Ne hakkında konuşalım?"
+    },
+    "deep": {
+      "label": "derin",
+      "duration": "Hazırlanmak için 10 dakikan, konuşmak için 1 dakikan var",
+      "heading": "Neyi keşfedelim?",
+      "prepareNote": "Konuyu anlamak için 10 dakikan var. Sonra kendi kelimelerinle 1 dakikada anlat"
+    }
+  },
+  "categories": {
+    "personal": "Kişisel",
+    "people": "İnsanlar",
+    "work": "İş ve para",
+    "life": "Hayat",
+    "opinions": "Görüşler",
+    "stories": "Hikâyeler",
+    "fantasy": "Hayal gücü",
+    "unexpected": "Beklenmedik"
+  },
+  "selection": {
+    "lead": "Bir veya birkaç konu seç",
+    "selectAll": "Hepsini seç",
+    "clearAll": "Seçimi kaldır",
+    "continue": "Devam et"
+  },
+  "mood": {
+    "toggle": "Bir ton ekle",
+    "help": "Ton eklemek ne demek",
+    "tooltip": "Site rastgele bir anlatım tarzı seçecek — «son derece ciddi»den «sır veriyormuş gibi»ye kadar.",
+    "options": [
+      "merakla",
+      "son derece ciddi",
+      "sır veriyormuş gibi",
+      "hafif alaycı",
+      "çok kendinden emin"
+    ]
+  },
+  "auth": {
+    "login": "Giriş",
+    "register": "Kayıt",
+    "logout": "Çıkış yap",
+    "kicker": "KONUŞMA PRATİĞİ",
+    "loginTitle": "Tekrar hoş geldin",
+    "registerTitle": "Hadi tanışalım",
+    "loginLead": "Pratiğe devam etmek için giriş yap.",
+    "registerLead": "Hesap oluştur ve daha güvenle konuşmaya devam et.",
+    "name": "İsim",
+    "namePlaceholder": "Adın ne?",
+    "email": "E-posta",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "En az 6 karakter",
+    "submitLogin": "Giriş yap",
+    "submitRegister": "Hesap oluştur",
+    "skip": "Giriş yapmadan devam et",
+    "close": "Kapat"
+  },
+  "analysis": {
+    "toggle": "Cevap analizi",
+    "help": "Cevap analizi ne demek",
+    "tooltipTitle": "Analiz için mikrofon gerekiyor",
+    "tooltipText": "Sadece konuşmanı kaydedeceğiz; metne dökmek ve konuşmanı incelemek için. Kayıt, ancak sen cevaba başlayınca başlar. Cevaptan sonra kaydı indirebilirsin.",
+    "enabled": "Cevap analizi açık",
+    "planned": "cevabını kaydedeceğiz",
+    "recording": "cevap kaydediliyor",
+    "kicker": "CEVAP ANALİZİ",
+    "title": "Konuşmanda fark ettiklerimiz",
+    "fillerPauses": "Doldurma sesleri",
+    "fillerWords": "Dolgu sözcükleri",
+    "slips": "Dil sürçmeleri",
+    "repeats": "Tekrarlar",
+    "pace": "Tempo",
+    "paceValue": "142 kelime/dk · rahat",
+    "demoPauses": "ııı / eee / mmm",
+    "demoWords": ["yani", "işte", "falan"],
+    "authCallout": "Tam analiz ve ilerlemenin kaydı için giriş yap ya da kayıt ol.",
+    "authCta": "Giriş yap veya kayıt ol"
+  },
+  "steps": { "wheel": "02 / KONU SEÇİMİ", "prepare": "03 / HAZIRLIK", "speak": "04 / KONUŞ" },
+  "wheel": { "start": "Başla", "spinAgain": "Tekrar çevir", "spinning": "Dönüyor…" },
+  "timer": {
+    "remaining": "{time} kaldı",
+    "prepareCaption": "Ne söylemek istediğini düşün",
+    "speakCaption": "Konuş",
+    "speakNow": "Şimdi konuş",
+    "finish": "Bitir",
+    "pause": "Duraklat",
+    "resume": "Devam et",
+    "close": "Kapat"
+  },
+  "finished": {
+    "title": "Tamam.",
+    "lead": "Önemli olan bunu yüksek sesle söylemiş olman.",
+    "again": "Bir tane daha",
+    "repeat": "Konuyu tekrarla",
+    "changeTopics": "Konuları değiştir"
+  },
+  "support": {
+    "title": "VSLUH'un büyümesine yardım et",
+    "text": "Bu antrenör sana faydalı olduysa gelişimini istediğin tutarla destekleyebilirsin.",
+    "cta": "Destek ol",
+    "madeBy": "Sonya tarafından yapıldı ·",
+    "close": "Kapat",
+    "portraitAlt": "Proje yazarı"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Konuşma pratiği",
+    "description": "VSLUH doğaçlama konuşma antrenörüdür. Hazırlanmak için 30 saniye, konuşmak için bir dakika. Konularını seç ve her gün pratik yap.",
+    "ogDescription": "Hazırlanmak için 30 saniye, konuşmak için bir dakika. Doğaçlama konuşma pratiği."
+  }
+}

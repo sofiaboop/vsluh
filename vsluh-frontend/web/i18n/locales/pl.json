@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Strona główna", "support": "Wesprzyj" },
+  "footer": "Praktyka mówienia",
+  "language": { "label": "Język", "switch": "Zmień język" },
+  "modes": {
+    "spontaneous": {
+      "label": "spontanicznie",
+      "duration": "Masz 30 sekund na przygotowanie i 1 minutę na mówienie",
+      "heading": "O czym porozmawiamy?"
+    },
+    "deep": {
+      "label": "głęboko",
+      "duration": "Masz 10 minut na przygotowanie i 1 minutę na mówienie",
+      "heading": "Co zgłębimy?",
+      "prepareNote": "Masz 10 minut, żeby zrozumieć temat. Potem wyjaśnij go własnymi słowami w 1 minutę"
+    }
+  },
+  "categories": {
+    "personal": "Osobiste",
+    "people": "Ludzie",
+    "work": "Praca i pieniądze",
+    "life": "Życie",
+    "opinions": "Opinie",
+    "stories": "Historie",
+    "fantasy": "Wyobraźnia",
+    "unexpected": "Nieoczekiwane"
+  },
+  "selection": {
+    "lead": "Wybierz jeden lub kilka tematów",
+    "selectAll": "Zaznacz wszystko",
+    "clearAll": "Wyczyść wybór",
+    "continue": "Dalej"
+  },
+  "mood": {
+    "toggle": "Dodaj nastrój",
+    "help": "Co znaczy dodać nastrój",
+    "tooltip": "Strona wylosuje styl wypowiedzi — od „śmiertelnie poważnie” po „jakbyś zdradzał sekret”.",
+    "options": [
+      "z ciekawością",
+      "śmiertelnie poważnie",
+      "jakbyś zdradzał sekret",
+      "z lekką ironią",
+      "bardzo pewnie"
+    ]
+  },
+  "auth": {
+    "login": "Logowanie",
+    "register": "Rejestracja",
+    "logout": "Wyloguj się",
+    "kicker": "PRAKTYKA MÓWIENIA",
+    "loginTitle": "Dobrze cię znowu widzieć",
+    "registerTitle": "Poznajmy się",
+    "loginLead": "Zaloguj się, żeby ćwiczyć dalej.",
+    "registerLead": "Załóż konto i mów dalej z większą pewnością.",
+    "name": "Imię",
+    "namePlaceholder": "Jak masz na imię?",
+    "email": "E-mail",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Hasło",
+    "passwordPlaceholder": "Minimum 6 znaków",
+    "submitLogin": "Zaloguj się",
+    "submitRegister": "Załóż konto",
+    "skip": "Kontynuuj bez logowania",
+    "close": "Zamknij"
+  },
+  "analysis": {
+    "toggle": "Analiza odpowiedzi",
+    "help": "Co znaczy analiza odpowiedzi",
+    "tooltipTitle": "Do analizy potrzebny jest mikrofon",
+    "tooltipText": "Nagramy tylko twoją wypowiedź, żeby ją przepisać i przeanalizować. Nagrywanie zacznie się dopiero, gdy zaczniesz odpowiadać. Po odpowiedzi nagranie możesz pobrać.",
+    "enabled": "Analiza odpowiedzi włączona",
+    "planned": "nagramy twoją odpowiedź",
+    "recording": "trwa nagrywanie odpowiedzi",
+    "kicker": "ANALIZA ODPOWIEDZI",
+    "title": "Co zauważyliśmy w twojej mowie",
+    "fillerPauses": "Pauzy wypełnione",
+    "fillerWords": "Przerywniki",
+    "slips": "Przejęzyczenia",
+    "repeats": "Powtórzenia",
+    "pace": "Tempo",
+    "paceValue": "142 słowa/min · komfortowo",
+    "demoPauses": "yyy / eee / mmm",
+    "demoWords": ["no", "wiesz", "jakby"],
+    "authCallout": "Po pełną analizę i zapis postępów zaloguj się albo zarejestruj.",
+    "authCta": "Zaloguj się lub zarejestruj"
+  },
+  "steps": { "wheel": "02 / WYBÓR TEMATU", "prepare": "03 / PRZYGOTOWANIE", "speak": "04 / MÓW" },
+  "wheel": { "start": "Zacznij", "spinAgain": "Zakręć jeszcze raz", "spinning": "Kręci się…" },
+  "timer": {
+    "remaining": "Zostało {time}",
+    "prepareCaption": "Pomyśl, co chcesz powiedzieć",
+    "speakCaption": "Mów",
+    "speakNow": "Mów teraz",
+    "finish": "Zakończ",
+    "pause": "Pauza",
+    "resume": "Wznów",
+    "close": "Zamknij"
+  },
+  "finished": {
+    "title": "Gotowe.",
+    "lead": "Najważniejsze, że powiedziałeś to na głos.",
+    "again": "Jeszcze raz",
+    "repeat": "Powtórz temat",
+    "changeTopics": "Zmień tematy"
+  },
+  "support": {
+    "title": "Pomóż VSLUH rosnąć",
+    "text": "Jeśli ten trener okazał się przydatny, możesz wesprzeć jego rozwój dowolną kwotą.",
+    "cta": "Wesprzyj",
+    "madeBy": "Zrobione przez Sonyę ·",
+    "close": "Zamknij",
+    "portraitAlt": "Autorka projektu"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Praktyka mówienia",
+    "description": "VSLUH to trener spontanicznego mówienia. 30 sekund na przygotowanie, minuta na mówienie. Wybierz tematy i ćwicz codziennie.",
+    "ogDescription": "30 sekund na przygotowanie, minuta na mówienie. Praktyka spontanicznego mówienia."
+  }
+}

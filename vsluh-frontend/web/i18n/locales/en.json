@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "home": "Home",
+    "support": "Support us"
+  },
+  "footer": "Speaking practice",
+  "language": {
+    "label": "Language",
+    "switch": "Change language"
+  },
+  "modes": {
+    "spontaneous": {
+      "label": "spontaneous",
+      "duration": "You get 30 seconds to prepare and 1 minute to speak",
+      "heading": "What shall we talk about?"
+    },
+    "deep": {
+      "label": "deep",
+      "duration": "You get 10 minutes to prepare and 1 minute to speak",
+      "heading": "What shall we explore?",
+      "prepareNote": "You have 10 minutes to dig into the topic. Then explain it in your own words in 1 minute"
+    }
+  },
+  "categories": {
+    "personal": "Personal",
+    "people": "People",
+    "work": "Work and money",
+    "life": "Life",
+    "opinions": "Opinions",
+    "stories": "Stories",
+    "fantasy": "Imagination",
+    "unexpected": "Unexpected"
+  },
+  "selection": {
+    "lead": "Pick one or several topics",
+    "selectAll": "Select all",
+    "clearAll": "Clear selection",
+    "continue": "Continue"
+  },
+  "mood": {
+    "toggle": "Add a mood",
+    "help": "What does adding a mood mean",
+    "tooltip": "The site will set a random delivery style — from “dead serious” to “like you're sharing a secret”.",
+    "options": [
+      "with curiosity",
+      "dead serious",
+      "like you're sharing a secret",
+      "with light irony",
+      "very confidently"
+    ]
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "kicker": "SPEAKING PRACTICE",
+    "loginTitle": "Welcome back",
+    "registerTitle": "Let's get to know each other",
+    "loginLead": "Log in to keep practising.",
+    "registerLead": "Create an account and keep speaking with more confidence.",
+    "name": "Name",
+    "namePlaceholder": "What's your name?",
+    "email": "Email",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "submitLogin": "Log in",
+    "submitRegister": "Create account",
+    "skip": "Continue without logging in",
+    "close": "Close"
+  },
+  "analysis": {
+    "toggle": "Answer analysis",
+    "help": "What answer analysis means",
+    "tooltipTitle": "Analysis needs your microphone",
+    "tooltipText": "We'll record only your speech, to transcribe it and break it down. Recording starts only once you begin your answer. Afterwards you can download the recording.",
+    "enabled": "Answer analysis is on",
+    "planned": "we'll record your answer",
+    "recording": "recording your answer",
+    "kicker": "ANSWER ANALYSIS",
+    "title": "What we noticed in your speech",
+    "fillerPauses": "Filler pauses",
+    "fillerWords": "Filler words",
+    "slips": "Slips of the tongue",
+    "repeats": "Repetitions",
+    "pace": "Pace",
+    "paceValue": "142 words/min · comfortable",
+    "demoPauses": "uhh / umm / err",
+    "demoWords": ["like", "you know", "basically"],
+    "authCallout": "For the full analysis and to keep track of your progress, log in or sign up.",
+    "authCta": "Log in or sign up"
+  },
+  "steps": {
+    "wheel": "02 / PICK A TOPIC",
+    "prepare": "03 / PREPARATION",
+    "speak": "04 / SPEAK"
+  },
+  "wheel": {
+    "start": "Start",
+    "spinAgain": "Spin again",
+    "spinning": "Spinning…"
+  },
+  "timer": {
+    "remaining": "{time} left",
+    "prepareCaption": "Think about what you want to say",
+    "speakCaption": "Speak",
+    "speakNow": "Speak now",
+    "finish": "Finish",
+    "pause": "Pause",
+    "resume": "Resume",
+    "close": "Close"
+  },
+  "finished": {
+    "title": "Done.",
+    "lead": "What matters is that you said it out loud.",
+    "again": "One more",
+    "repeat": "Repeat the topic",
+    "changeTopics": "Change topics"
+  },
+  "support": {
+    "title": "Help VSLUH grow",
+    "text": "If this trainer turned out to be useful, you can support its development with any amount.",
+    "cta": "Support us",
+    "madeBy": "Made by Sonya ·",
+    "close": "Close",
+    "portraitAlt": "Project author"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Speaking practice",
+    "description": "VSLUH is a spontaneous speaking trainer. 30 seconds to prepare, one minute to speak. Pick your topics and practise every day.",
+    "ogDescription": "30 seconds to prepare, one minute to speak. Spontaneous speaking practice."
+  }
+}

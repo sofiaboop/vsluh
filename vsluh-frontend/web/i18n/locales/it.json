@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Home", "support": "Sostieni" },
+  "footer": "Pratica del parlato",
+  "language": { "label": "Lingua", "switch": "Cambia lingua" },
+  "modes": {
+    "spontaneous": {
+      "label": "spontaneo",
+      "duration": "Hai 30 secondi per prepararti e 1 minuto per parlare",
+      "heading": "Di cosa parliamo?"
+    },
+    "deep": {
+      "label": "profondo",
+      "duration": "Hai 10 minuti per prepararti e 1 minuto per parlare",
+      "heading": "Cosa esploriamo?",
+      "prepareNote": "Hai 10 minuti per capire il tema. Poi spiegalo con parole tue in 1 minuto"
+    }
+  },
+  "categories": {
+    "personal": "Personale",
+    "people": "Persone",
+    "work": "Lavoro e denaro",
+    "life": "Vita",
+    "opinions": "Opinioni",
+    "stories": "Storie",
+    "fantasy": "Immaginazione",
+    "unexpected": "Inaspettato"
+  },
+  "selection": {
+    "lead": "Scegli uno o più temi",
+    "selectAll": "Scegli tutti",
+    "clearAll": "Azzera la scelta",
+    "continue": "Continua"
+  },
+  "mood": {
+    "toggle": "Aggiungi un tono",
+    "help": "Cosa significa aggiungere un tono",
+    "tooltip": "Il sito sceglierà a caso uno stile — da «serissimo» a «come se stessi confidando un segreto».",
+    "options": [
+      "con curiosità",
+      "serissimo",
+      "come se confidassi un segreto",
+      "con leggera ironia",
+      "con grande sicurezza"
+    ]
+  },
+  "auth": {
+    "login": "Accedi",
+    "register": "Registrati",
+    "logout": "Esci",
+    "kicker": "PRATICA DEL PARLATO",
+    "loginTitle": "Bentornato",
+    "registerTitle": "Facciamo conoscenza",
+    "loginLead": "Accedi per continuare a esercitarti.",
+    "registerLead": "Crea un account e continua a parlare con più sicurezza.",
+    "name": "Nome",
+    "namePlaceholder": "Come ti chiami?",
+    "email": "Email",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Almeno 6 caratteri",
+    "submitLogin": "Accedi",
+    "submitRegister": "Crea account",
+    "skip": "Continua senza accedere",
+    "close": "Chiudi"
+  },
+  "analysis": {
+    "toggle": "Analisi della risposta",
+    "help": "Cosa significa l'analisi della risposta",
+    "tooltipTitle": "Per l'analisi serve il microfono",
+    "tooltipText": "Registriamo solo il tuo intervento, per trascriverlo e analizzare il tuo parlato. La registrazione parte solo quando inizi a rispondere. Dopo puoi scaricarla.",
+    "enabled": "Analisi della risposta attiva",
+    "planned": "registreremo la tua risposta",
+    "recording": "registrazione della risposta in corso",
+    "kicker": "ANALISI DELLA RISPOSTA",
+    "title": "Cosa abbiamo notato nel tuo parlato",
+    "fillerPauses": "Pause riempitive",
+    "fillerWords": "Intercalari",
+    "slips": "Lapsus",
+    "repeats": "Ripetizioni",
+    "pace": "Ritmo",
+    "paceValue": "142 parole/min · comodo",
+    "demoPauses": "ehm / mmm / uhm",
+    "demoWords": ["cioè", "tipo", "praticamente"],
+    "authCallout": "Per l'analisi completa e per salvare i tuoi progressi, accedi o registrati.",
+    "authCta": "Accedi o registrati"
+  },
+  "steps": { "wheel": "02 / SCELTA DEL TEMA", "prepare": "03 / PREPARAZIONE", "speak": "04 / PARLA" },
+  "wheel": { "start": "Inizia", "spinAgain": "Gira ancora", "spinning": "Sta girando…" },
+  "timer": {
+    "remaining": "Restano {time}",
+    "prepareCaption": "Pensa a cosa vuoi dire",
+    "speakCaption": "Parla",
+    "speakNow": "Parla adesso",
+    "finish": "Concludi",
+    "pause": "Pausa",
+    "resume": "Riprendi",
+    "close": "Chiudi"
+  },
+  "finished": {
+    "title": "Fatto.",
+    "lead": "L'importante è che tu l'abbia detto ad alta voce.",
+    "again": "Un'altra",
+    "repeat": "Ripeti il tema",
+    "changeTopics": "Cambia temi"
+  },
+  "support": {
+    "title": "Aiuta VSLUH a crescere",
+    "text": "Se questo allenatore ti è stato utile, puoi sostenerne lo sviluppo con qualsiasi cifra.",
+    "cta": "Sostieni",
+    "madeBy": "Fatto da Sonya ·",
+    "close": "Chiudi",
+    "portraitAlt": "Autrice del progetto"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Pratica del parlato",
+    "description": "VSLUH è un allenatore di parlato spontaneo. 30 secondi per prepararti, un minuto per parlare. Scegli i temi e allenati ogni giorno.",
+    "ogDescription": "30 secondi per prepararti, un minuto per parlare. Pratica del parlato spontaneo."
+  }
+}

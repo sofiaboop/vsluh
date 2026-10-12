@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Accueil", "support": "Soutenir" },
+  "footer": "Pratique de la parole",
+  "language": { "label": "Langue", "switch": "Changer de langue" },
+  "modes": {
+    "spontaneous": {
+      "label": "spontané",
+      "duration": "Tu as 30 secondes pour préparer et 1 minute pour parler",
+      "heading": "De quoi parle-t-on ?"
+    },
+    "deep": {
+      "label": "approfondi",
+      "duration": "Tu as 10 minutes pour préparer et 1 minute pour parler",
+      "heading": "Qu'explore-t-on ?",
+      "prepareNote": "Tu as 10 minutes pour comprendre le sujet. Ensuite explique-le avec tes mots en 1 minute"
+    }
+  },
+  "categories": {
+    "personal": "Personnel",
+    "people": "Les autres",
+    "work": "Travail et argent",
+    "life": "Vie",
+    "opinions": "Opinions",
+    "stories": "Histoires",
+    "fantasy": "Imagination",
+    "unexpected": "Inattendu"
+  },
+  "selection": {
+    "lead": "Choisis un ou plusieurs thèmes",
+    "selectAll": "Tout choisir",
+    "clearAll": "Tout désélectionner",
+    "continue": "Continuer"
+  },
+  "mood": {
+    "toggle": "Ajouter un ton",
+    "help": "Ce que veut dire ajouter un ton",
+    "tooltip": "Le site tirera un style au hasard — de « très sérieusement » à « comme si tu confiais un secret ».",
+    "options": [
+      "avec curiosité",
+      "très sérieusement",
+      "comme si tu confiais un secret",
+      "avec une légère ironie",
+      "avec beaucoup d'assurance"
+    ]
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Se déconnecter",
+    "kicker": "PRATIQUE DE LA PAROLE",
+    "loginTitle": "Content de te revoir",
+    "registerTitle": "Faisons connaissance",
+    "loginLead": "Connecte-toi pour continuer à pratiquer.",
+    "registerLead": "Crée un compte et continue à parler avec plus d'assurance.",
+    "name": "Prénom",
+    "namePlaceholder": "Comment tu t'appelles ?",
+    "email": "E-mail",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Au moins 6 caractères",
+    "submitLogin": "Se connecter",
+    "submitRegister": "Créer un compte",
+    "skip": "Continuer sans compte",
+    "close": "Fermer"
+  },
+  "analysis": {
+    "toggle": "Analyse de la réponse",
+    "help": "Ce que signifie l'analyse de la réponse",
+    "tooltipTitle": "Pour l'analyse, il faut le micro",
+    "tooltipText": "On enregistre seulement ta prise de parole, pour la transcrire et analyser ton discours. L'enregistrement démarre seulement quand tu commences à répondre. Ensuite, tu pourras le télécharger.",
+    "enabled": "Analyse de la réponse activée",
+    "planned": "on enregistrera ta réponse",
+    "recording": "enregistrement de ta réponse",
+    "kicker": "ANALYSE DE LA RÉPONSE",
+    "title": "Ce qu'on a remarqué dans ta parole",
+    "fillerPauses": "Pauses remplies",
+    "fillerWords": "Tics de langage",
+    "slips": "Lapsus",
+    "repeats": "Répétitions",
+    "pace": "Rythme",
+    "paceValue": "142 mots/min · confortable",
+    "demoPauses": "euh / hum / bah",
+    "demoWords": ["genre", "du coup", "en fait"],
+    "authCallout": "Pour l'analyse complète et pour garder ta progression, connecte-toi ou inscris-toi.",
+    "authCta": "Se connecter ou s'inscrire"
+  },
+  "steps": { "wheel": "02 / CHOIX DU THÈME", "prepare": "03 / PRÉPARATION", "speak": "04 / PARLE" },
+  "wheel": { "start": "Commencer", "spinAgain": "Relancer", "spinning": "Ça tourne…" },
+  "timer": {
+    "remaining": "Il reste {time}",
+    "prepareCaption": "Réfléchis à ce que tu veux dire",
+    "speakCaption": "Parle",
+    "speakNow": "Parler maintenant",
+    "finish": "Terminer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "close": "Fermer"
+  },
+  "finished": {
+    "title": "C'est fait.",
+    "lead": "L'essentiel, c'est que tu l'aies dit à voix haute.",
+    "again": "Encore une",
+    "repeat": "Refaire ce thème",
+    "changeTopics": "Changer de thèmes"
+  },
+  "support": {
+    "title": "Aide VSLUH à grandir",
+    "text": "Si cet entraîneur t'a été utile, tu peux soutenir son développement avec le montant de ton choix.",
+    "cta": "Soutenir",
+    "madeBy": "Fait par Sonya ·",
+    "close": "Fermer",
+    "portraitAlt": "Autrice du projet"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Pratique de la parole",
+    "description": "VSLUH est un entraîneur de parole spontanée. 30 secondes pour préparer, une minute pour parler. Choisis tes thèmes et pratique chaque jour.",
+    "ogDescription": "30 secondes pour préparer, une minute pour parler. Pratique de la parole spontanée."
+  }
+}

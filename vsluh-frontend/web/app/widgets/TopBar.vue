@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { SUPPORT } from '~/shared/constants/practice'
 
+const { t } = useI18n()
 const { backToTopics } = usePractice()
+const { isAuthenticated, dialogMode, openAuth, logout } = useAuth()
 const supportOpen = ref(false)
 
 function close() {
@@ -19,26 +21,50 @@ onMounted(() => {
 
 <template>
   <header class="topbar">
-    <button aria-label="На главную" class="brand" type="button" @click="backToTopics">
+    <button :aria-label="t('nav.home')" class="brand" type="button" @click="backToTopics">
       <span class="brand-mark"><span /></span>
       <span>ВСЛУХ</span>
     </button>
 
-    <button class="support-button" type="button" @click="supportOpen = true">Поддержать</button>
+    <div class="topbar-actions">
+      <LanguagePicker />
+
+      <button v-if="isAuthenticated" class="auth-nav-button" type="button" @click="logout">
+        {{ t('auth.logout') }}
+      </button>
+      <div v-else class="auth-nav">
+        <button class="auth-nav-button" type="button" @click="openAuth('login')">
+          {{ t('auth.login') }}
+        </button>
+        <button
+          class="auth-nav-button auth-nav-button--register"
+          type="button"
+          @click="openAuth('register')"
+        >
+          {{ t('auth.register') }}
+        </button>
+      </div>
+
+      <button class="support-button" type="button" @click="supportOpen = true">
+        {{ t('nav.support') }}
+      </button>
+    </div>
   </header>
+
+  <AuthDialog v-if="dialogMode" />
 
   <Teleport to="body">
     <div v-if="supportOpen" class="support-overlay" @click.self="close">
       <div class="support-dialog" role="dialog" aria-modal="true">
-        <button aria-label="Закрыть" class="support-close" type="button" @click="close" />
-        <img alt="Автор проекта" class="support-portrait" src="/support-portrait.png" />
-        <h2>{{ SUPPORT.title }}</h2>
-        <p>{{ SUPPORT.text }}</p>
+        <button :aria-label="t('support.close')" class="support-close" type="button" @click="close" />
+        <img :alt="t('support.portraitAlt')" class="support-portrait" src="/support-portrait.png" />
+        <h2>{{ t('support.title') }}</h2>
+        <p>{{ t('support.text') }}</p>
         <a class="support-link" :href="SUPPORT.payUrl" rel="noreferrer" target="_blank">
-          Поддержать
+          {{ t('support.cta') }}
         </a>
         <div class="support-dialog-footer">
-          Сделано Соней ·
+          {{ t('support.madeBy') }}
           <a class="support-inline-link" :href="SUPPORT.authorUrl" rel="noreferrer" target="_blank">
             {{ SUPPORT.authorHandle }}
           </a>

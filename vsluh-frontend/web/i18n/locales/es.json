@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Inicio", "support": "Apoyar" },
+  "footer": "Práctica de habla",
+  "language": { "label": "Idioma", "switch": "Cambiar idioma" },
+  "modes": {
+    "spontaneous": {
+      "label": "espontáneo",
+      "duration": "Tienes 30 segundos para prepararte y 1 minuto para hablar",
+      "heading": "¿De qué hablamos?"
+    },
+    "deep": {
+      "label": "profundo",
+      "duration": "Tienes 10 minutos para prepararte y 1 minuto para hablar",
+      "heading": "¿Qué exploramos?",
+      "prepareNote": "Tienes 10 minutos para entender el tema. Luego explícalo con tus palabras en 1 minuto"
+    }
+  },
+  "categories": {
+    "personal": "Personal",
+    "people": "Personas",
+    "work": "Trabajo y dinero",
+    "life": "Vida",
+    "opinions": "Opiniones",
+    "stories": "Historias",
+    "fantasy": "Imaginación",
+    "unexpected": "Inesperado"
+  },
+  "selection": {
+    "lead": "Elige uno o varios temas",
+    "selectAll": "Seleccionar todo",
+    "clearAll": "Quitar selección",
+    "continue": "Continuar"
+  },
+  "mood": {
+    "toggle": "Añadir un tono",
+    "help": "Qué significa añadir un tono",
+    "tooltip": "La web elegirá un estilo al azar — desde «muy en serio» hasta «como si contaras un secreto».",
+    "options": [
+      "con curiosidad",
+      "muy en serio",
+      "como si contaras un secreto",
+      "con ligera ironía",
+      "con mucha seguridad"
+    ]
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Salir",
+    "kicker": "PRÁCTICA DE HABLA",
+    "loginTitle": "Qué bueno verte otra vez",
+    "registerTitle": "Vamos a conocernos",
+    "loginLead": "Inicia sesión para seguir practicando.",
+    "registerLead": "Crea una cuenta y sigue hablando con más seguridad.",
+    "name": "Nombre",
+    "namePlaceholder": "¿Cómo te llamas?",
+    "email": "Correo",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Mínimo 6 caracteres",
+    "submitLogin": "Entrar",
+    "submitRegister": "Crear cuenta",
+    "skip": "Continuar sin iniciar sesión",
+    "close": "Cerrar"
+  },
+  "analysis": {
+    "toggle": "Análisis de la respuesta",
+    "help": "Qué significa el análisis de la respuesta",
+    "tooltipTitle": "Para el análisis hace falta el micrófono",
+    "tooltipText": "Solo grabaremos tu intervención para transcribirla y analizar tu habla. La grabación empieza cuando comienzas a responder. Después podrás descargarla.",
+    "enabled": "Análisis de la respuesta activado",
+    "planned": "grabaremos tu respuesta",
+    "recording": "grabando tu respuesta",
+    "kicker": "ANÁLISIS DE LA RESPUESTA",
+    "title": "Lo que notamos en tu habla",
+    "fillerPauses": "Pausas de relleno",
+    "fillerWords": "Muletillas",
+    "slips": "Lapsus",
+    "repeats": "Repeticiones",
+    "pace": "Ritmo",
+    "paceValue": "142 palabras/min · cómodo",
+    "demoPauses": "eee / mmm / este",
+    "demoWords": ["o sea", "bueno", "tipo"],
+    "authCallout": "Para el análisis completo y para guardar tu progreso, inicia sesión o regístrate.",
+    "authCta": "Iniciar sesión o registrarse"
+  },
+  "steps": { "wheel": "02 / ELEGIR TEMA", "prepare": "03 / PREPARACIÓN", "speak": "04 / HABLA" },
+  "wheel": { "start": "Empezar", "spinAgain": "Girar otra vez", "spinning": "Girando…" },
+  "timer": {
+    "remaining": "Quedan {time}",
+    "prepareCaption": "Piensa qué quieres decir",
+    "speakCaption": "Habla",
+    "speakNow": "Hablar ya",
+    "finish": "Terminar",
+    "pause": "Pausa",
+    "resume": "Continuar",
+    "close": "Cerrar"
+  },
+  "finished": {
+    "title": "Listo.",
+    "lead": "Lo importante es que lo dijiste en voz alta.",
+    "again": "Una más",
+    "repeat": "Repetir el tema",
+    "changeTopics": "Cambiar temas"
+  },
+  "support": {
+    "title": "Ayuda a VSLUH a crecer",
+    "text": "Si este entrenador te resultó útil, puedes apoyar su desarrollo con cualquier cantidad.",
+    "cta": "Apoyar",
+    "madeBy": "Hecho por Sonya ·",
+    "close": "Cerrar",
+    "portraitAlt": "Autora del proyecto"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Práctica de habla",
+    "description": "VSLUH es un entrenador de habla espontánea. 30 segundos para prepararte, un minuto para hablar. Elige tus temas y practica cada día.",
+    "ogDescription": "30 segundos para prepararte, un minuto para hablar. Práctica de habla espontánea."
+  }
+}

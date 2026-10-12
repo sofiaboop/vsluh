@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { MODES, MOOD_TOOLTIP, TOPICS } from '~/shared/constants/practice'
+import { MODES, TOPIC_IDS } from '~/shared/constants/practice'
 
-const { mode, modeOption, selected, moodEnabled, allSelected, canContinue, toggleTopic, toggleAll, startWheel } =
+const { t } = useI18n()
+const { mode, selected, moodEnabled, analysisEnabled, allSelected, canContinue, toggleTopic, toggleAll, startWheel } =
   usePractice()
 
 const tooltipOpen = ref(false)
+const analysisTooltipOpen = ref(false)
 </script>
 
 <template>
@@ -19,17 +21,17 @@ const tooltipOpen = ref(false)
             :class="{ 'selection-mode-option--active': mode === option.id }"
             @click="mode = option.id"
           >
-            {{ option.label }}
+            {{ t(`modes.${option.id}.label`) }}
           </button>
         </template>
       </div>
     </div>
 
-    <div class="selection-duration">{{ modeOption.duration }}</div>
+    <div class="selection-duration">{{ t(`modes.${mode}.duration`) }}</div>
 
     <div class="selection-main">
-      <h1>О чём поговорим?</h1>
-      <p class="lead">Выбери одну или несколько тем</p>
+      <h1>{{ t(`modes.${mode}.heading`) }}</h1>
+      <p class="lead">{{ t('selection.lead') }}</p>
 
       <div class="chips">
         <button
@@ -39,18 +41,18 @@ const tooltipOpen = ref(false)
           :aria-pressed="allSelected"
           @click="toggleAll"
         >
-          Выбрать все
+          {{ allSelected ? t('selection.clearAll') : t('selection.selectAll') }}
         </button>
         <button
-          v-for="topic in TOPICS"
-          :key="topic.id"
+          v-for="id in TOPIC_IDS"
+          :key="id"
           type="button"
           class="chip"
-          :class="{ 'chip--selected': selected.includes(topic.id) }"
-          :aria-pressed="selected.includes(topic.id)"
-          @click="toggleTopic(topic.id)"
+          :class="{ 'chip--selected': selected.includes(id) }"
+          :aria-pressed="selected.includes(id)"
+          @click="toggleTopic(id)"
         >
-          {{ topic.label }}
+          {{ t(`categories.${id}`) }}
         </button>
       </div>
 
@@ -61,22 +63,50 @@ const tooltipOpen = ref(false)
           :class="{ 'toggle--active': moodEnabled }"
           role="switch"
           :aria-checked="moodEnabled"
-          aria-label="Добавить настроение"
+          :aria-label="t('mood.toggle')"
           @click="moodEnabled = !moodEnabled"
         >
           <span />
         </button>
-        <span>Добавить настроение</span>
+        <span>{{ t('mood.toggle') }}</span>
         <button
           type="button"
           class="help-button"
-          aria-label="Что значит добавить настроение"
+          :aria-label="t('mood.help')"
           :aria-expanded="tooltipOpen"
           @click="tooltipOpen = !tooltipOpen"
         >
           ?
         </button>
-        <div v-if="tooltipOpen" class="tooltip" role="tooltip">{{ MOOD_TOOLTIP }}</div>
+        <div v-if="tooltipOpen" class="tooltip" role="tooltip">{{ t('mood.tooltip') }}</div>
+      </div>
+
+      <div class="mood-control analysis-control">
+        <button
+          type="button"
+          class="toggle"
+          :class="{ 'toggle--active': analysisEnabled }"
+          role="switch"
+          :aria-checked="analysisEnabled"
+          :aria-label="t('analysis.toggle')"
+          @click="analysisEnabled = !analysisEnabled"
+        >
+          <span />
+        </button>
+        <span>{{ t('analysis.toggle') }}</span>
+        <button
+          type="button"
+          class="help-button"
+          :aria-label="t('analysis.help')"
+          :aria-expanded="analysisTooltipOpen"
+          @click="analysisTooltipOpen = !analysisTooltipOpen"
+        >
+          ?
+        </button>
+        <div v-if="analysisTooltipOpen" class="tooltip tooltip--analysis" role="tooltip">
+          <strong>{{ t('analysis.tooltipTitle') }}</strong>
+          <span>{{ t('analysis.tooltipText') }}</span>
+        </div>
       </div>
 
       <div class="selection-action">
@@ -86,7 +116,7 @@ const tooltipOpen = ref(false)
           :disabled="!canContinue"
           @click="startWheel"
         >
-          Продолжить
+          {{ t('selection.continue') }}
         </button>
       </div>
     </div>

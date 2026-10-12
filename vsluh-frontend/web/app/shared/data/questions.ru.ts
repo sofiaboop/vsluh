@@ -1,7 +1,7 @@
 // Банк вопросов из эталонного макета. 8 тем по 30 вопросов.
 import type { TopicId } from '~/shared/constants/practice'
 
-export const QUESTIONS: Record<TopicId, string[]> = {
+export const QUESTIONS_RU: Record<TopicId, string[]> = {
   personal: [
     'Детство',
     'Привычки',

@@ -1,11 +1,11 @@
-import { MODES, MOODS, TOPICS, WHEEL, type SpeakingMode, type TopicId } from '~/shared/constants/practice'
-import { QUESTIONS } from '~/shared/data/questions'
+import { MODES, MOOD_COUNT, TOPIC_IDS, WHEEL, type SpeakingMode, type TopicId } from '~/shared/constants/practice'
+import { topicBank } from '~/shared/data/topicBank'
 import { playStop } from '~/shared/lib/sound'
 
 export type Stage = 'topics' | 'wheel' | 'prepare' | 'speak' | 'finished'
 
 export interface WheelRow {
-  topic: string
+  topic: TopicId
   question: string
 }
 
@@ -19,11 +19,14 @@ let spinFallback: ReturnType<typeof setTimeout> | undefined
 let tick: ReturnType<typeof setInterval> | undefined
 
 export function usePractice() {
+  const { locale } = useI18n()
+
   const stage = useState<Stage>('practice-stage', () => 'topics')
   const mode = useState<SpeakingMode>('practice-mode', () => 'spontaneous')
   const selected = useState<TopicId[]>('practice-topics', () => [])
   const moodEnabled = useState('practice-mood-on', () => false)
-  const mood = useState('practice-mood', () => '')
+  const moodIndex = useState<number | null>('practice-mood', () => null)
+  const analysisEnabled = useState('practice-analysis-on', () => false)
 
   const rows = useState<WheelRow[]>('practice-rows', () => [])
   const spinning = useState('practice-spinning', () => false)
@@ -35,7 +38,7 @@ export function usePractice() {
   const paused = useState('practice-paused', () => false)
 
   const modeOption = computed(() => MODES.find((m) => m.id === mode.value)!)
-  const allSelected = computed(() => selected.value.length === TOPICS.length)
+  const allSelected = computed(() => selected.value.length === TOPIC_IDS.length)
   const canContinue = computed(() => selected.value.length > 0)
   const chosen = computed<WheelRow | null>(() => rows.value[WHEEL.selectedIndex] ?? null)
   const totalSec = computed(() =>
@@ -53,21 +56,29 @@ export function usePractice() {
   }
 
   function toggleAll() {
-    selected.value = allSelected.value ? [] : TOPICS.map((t) => t.id)
+    selected.value = allSelected.value ? [] : [...TOPIC_IDS]
   }
 
   function buildRows(): WheelRow[] {
-    const pool = selected.value.flatMap((id) => {
-      const label = TOPICS.find((t) => t.id === id)!.label
-      return QUESTIONS[id].map((question) => ({ topic: label, question }))
+    const bank = topicBank(locale.value, mode.value)
+    const pool = selected.value.flatMap((id) =>
+      bank[id].map((question) => ({ topic: id, question })),
+    )
+
+    // барабан не должен показывать одну и ту же тему дважды, пока пул это позволяет
+    const used = new Set<string>()
+    return Array.from({ length: WHEEL.rows }, () => {
+      const fresh = pool.filter((row) => !used.has(row.question))
+      const row = pick(fresh.length ? fresh : pool)
+      used.add(row.question)
+      return row
     })
-    return Array.from({ length: WHEEL.rows }, () => pick(pool))
   }
 
   function spin() {
     if (spinning.value) return
     rows.value = buildRows()
-    mood.value = moodEnabled.value ? pick(MOODS) : ''
+    moodIndex.value = moodEnabled.value ? Math.floor(Math.random() * MOOD_COUNT) : null
     selectedIndex.value = WHEEL.startIndex
     settled.value = false
     spinning.value = true
@@ -162,23 +173,29 @@ export function usePractice() {
     startPrepare()
   }
 
+  // банк тем у каждого языка свой — начатую сессию продолжать нечем
+  watch(locale, () => {
+    if (stage.value !== 'topics') backToTopics()
+    rows.value = []
+  })
+
   return {
     stage,
     mode,
     selected,
     moodEnabled,
-    mood,
+    moodIndex,
+    analysisEnabled,
     rows,
     spinning,
     settled,
     selectedIndex,
     remaining,
     paused,
-    modeOption,
+    timerAngle,
     allSelected,
     canContinue,
     chosen,
-    timerAngle,
     toggleTopic,
     toggleAll,
     startWheel,

@@ -2,12 +2,14 @@
 import { WHEEL } from '~/shared/constants/practice'
 import { playTick } from '~/shared/lib/sound'
 
+const { t, tm, rt } = useI18n()
 const {
   rows,
   spinning,
   settled,
   selectedIndex,
-  mood,
+  moodIndex,
+  analysisEnabled,
   chosen,
   startPrepare,
   spin,
@@ -15,9 +17,19 @@ const {
   highlight,
 } = usePractice()
 
+const mood = computed(() => {
+  if (moodIndex.value === null) return ''
+  const options = tm('mood.options') as unknown[]
+  const option = options[moodIndex.value]
+  return option ? rt(option as string) : ''
+})
+
 const listRef = ref<HTMLElement | null>(null)
+const winnerRef = ref<HTMLElement | null>(null)
 let raf = 0
 let passed = WHEEL.startIndex
+
+useFitText(winnerRef, () => [settled.value, chosen.value?.question])
 
 /** Пока идёт CSS-анимация, читаем её transform и щёлкаем на каждой проехавшей строке. */
 function track() {
@@ -57,11 +69,15 @@ function onAnimationEnd(event: AnimationEvent) {
 function distance(index: number) {
   return Math.min(Math.abs(index - selectedIndex.value), 4)
 }
+
+function setWinnerRef(el: Element | ComponentPublicInstance | null) {
+  winnerRef.value = el as HTMLElement | null
+}
 </script>
 
 <template>
   <section class="content wheel-content">
-    <div class="step-label">02 / ВЫБОР ТЕМЫ</div>
+    <div class="step-label">{{ t('steps.wheel') }}</div>
 
     <div class="wheel-wrap">
       <div
@@ -79,17 +95,23 @@ function distance(index: number) {
             `wheel-row--distance-${distance(index)}`,
           ]"
         >
-          <span class="wheel-category">{{ row.topic }}</span>
-          <span class="wheel-topic">{{ row.question }}</span>
+          <span class="wheel-category">{{ t(`categories.${row.topic}`) }}</span>
+          <span
+            :ref="index === WHEEL.selectedIndex ? setWinnerRef : undefined"
+            class="wheel-topic"
+          >{{ row.question }}</span>
         </div>
       </div>
     </div>
 
     <div v-if="chosen" class="chosen-mobile">
-      <span>{{ chosen.topic }}</span>{{ chosen.question }}
+      <span>{{ t(`categories.${chosen.topic}`) }}</span>{{ chosen.question }}
     </div>
 
-    <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
+    <div class="wheel-statuses">
+      <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
+      <AnalysisStatus v-if="analysisEnabled" variant="planned" />
+    </div>
 
     <div class="wheel-actions">
       <button
@@ -98,7 +120,7 @@ function distance(index: number) {
         :disabled="spinning"
         @click="startPrepare"
       >
-        Начать
+        {{ t('wheel.start') }}
       </button>
       <button
         type="button"
@@ -107,7 +129,7 @@ function distance(index: number) {
         @click="spin"
       >
         <span class="spin-icon" :class="{ 'spin-icon--active': spinning }">↻</span>
-        {{ spinning ? 'Крутим…' : 'Крутить ещё' }}
+        {{ spinning ? t('wheel.spinning') : t('wheel.spinAgain') }}
       </button>
     </div>
   </section>

@@ -1,0 +1,119 @@
+{
+  "nav": { "home": "Startseite", "support": "Unterstützen" },
+  "footer": "Sprechpraxis",
+  "language": { "label": "Sprache", "switch": "Sprache wechseln" },
+  "modes": {
+    "spontaneous": {
+      "label": "spontan",
+      "duration": "Du hast 30 Sekunden Vorbereitung und 1 Minute zum Sprechen",
+      "heading": "Worüber sprechen wir?"
+    },
+    "deep": {
+      "label": "tief",
+      "duration": "Du hast 10 Minuten Vorbereitung und 1 Minute zum Sprechen",
+      "heading": "Was erkunden wir?",
+      "prepareNote": "Du hast 10 Minuten, um das Thema zu durchdringen. Danach erklärst du es in eigenen Worten in 1 Minute"
+    }
+  },
+  "categories": {
+    "personal": "Persönlich",
+    "people": "Menschen",
+    "work": "Arbeit und Geld",
+    "life": "Leben",
+    "opinions": "Meinungen",
+    "stories": "Geschichten",
+    "fantasy": "Fantasie",
+    "unexpected": "Unerwartet"
+  },
+  "selection": {
+    "lead": "Wähle ein oder mehrere Themen",
+    "selectAll": "Alle auswählen",
+    "clearAll": "Auswahl aufheben",
+    "continue": "Weiter"
+  },
+  "mood": {
+    "toggle": "Stimmung hinzufügen",
+    "help": "Was bedeutet Stimmung hinzufügen",
+    "tooltip": "Die Seite wählt zufällig einen Vortragsstil — von „todernst“ bis „als würdest du ein Geheimnis verraten“.",
+    "options": [
+      "neugierig",
+      "todernst",
+      "als würdest du ein Geheimnis verraten",
+      "mit leichter Ironie",
+      "sehr selbstbewusst"
+    ]
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "kicker": "SPRECHPRAXIS",
+    "loginTitle": "Schön, dass du wieder da bist",
+    "registerTitle": "Lass uns kennenlernen",
+    "loginLead": "Melde dich an, um weiterzuüben.",
+    "registerLead": "Erstelle ein Konto und sprich weiter mit mehr Sicherheit.",
+    "name": "Name",
+    "namePlaceholder": "Wie heißt du?",
+    "email": "E-Mail",
+    "emailPlaceholder": "name{'@'}example.com",
+    "password": "Passwort",
+    "passwordPlaceholder": "Mindestens 6 Zeichen",
+    "submitLogin": "Anmelden",
+    "submitRegister": "Konto erstellen",
+    "skip": "Ohne Anmeldung fortfahren",
+    "close": "Schließen"
+  },
+  "analysis": {
+    "toggle": "Antwortanalyse",
+    "help": "Was die Antwortanalyse bedeutet",
+    "tooltipTitle": "Für die Analyse brauchen wir dein Mikrofon",
+    "tooltipText": "Wir nehmen nur deinen Beitrag auf, um ihn zu transkribieren und deine Sprache auszuwerten. Die Aufnahme startet erst, wenn du mit deiner Antwort beginnst. Danach kannst du die Aufnahme herunterladen.",
+    "enabled": "Antwortanalyse ist aktiv",
+    "planned": "wir nehmen deine Antwort auf",
+    "recording": "Antwort wird aufgenommen",
+    "kicker": "ANTWORTANALYSE",
+    "title": "Was uns an deiner Sprache aufgefallen ist",
+    "fillerPauses": "Füllpausen",
+    "fillerWords": "Füllwörter",
+    "slips": "Versprecher",
+    "repeats": "Wiederholungen",
+    "pace": "Tempo",
+    "paceValue": "142 Wörter/Min · angenehm",
+    "demoPauses": "ähm / öhm / mhh",
+    "demoWords": ["halt", "irgendwie", "quasi"],
+    "authCallout": "Für die vollständige Analyse und deinen gespeicherten Fortschritt melde dich an oder registriere dich.",
+    "authCta": "Anmelden oder registrieren"
+  },
+  "steps": { "wheel": "02 / THEMENWAHL", "prepare": "03 / VORBEREITUNG", "speak": "04 / SPRICH" },
+  "wheel": { "start": "Starten", "spinAgain": "Nochmal drehen", "spinning": "Dreht…" },
+  "timer": {
+    "remaining": "Noch {time}",
+    "prepareCaption": "Überlege, was du sagen willst",
+    "speakCaption": "Sprich",
+    "speakNow": "Jetzt sprechen",
+    "finish": "Beenden",
+    "pause": "Pause",
+    "resume": "Weiter",
+    "close": "Schließen"
+  },
+  "finished": {
+    "title": "Fertig.",
+    "lead": "Wichtig ist, dass du es laut gesagt hast.",
+    "again": "Noch eine",
+    "repeat": "Thema wiederholen",
+    "changeTopics": "Themen ändern"
+  },
+  "support": {
+    "title": "Hilf VSLUH zu wachsen",
+    "text": "Wenn dir dieser Trainer geholfen hat, kannst du seine Entwicklung mit jedem Betrag unterstützen.",
+    "cta": "Unterstützen",
+    "madeBy": "Gemacht von Sonya ·",
+    "close": "Schließen",
+    "portraitAlt": "Autorin des Projekts"
+  },
+  "meta": {
+    "title": "VSLUH {'|'} Sprechpraxis",
+    "description": "VSLUH ist ein Trainer für spontanes Sprechen. 30 Sekunden Vorbereitung, eine Minute Sprechen. Wähle deine Themen und übe jeden Tag.",
+    "ogDescription": "30 Sekunden Vorbereitung, eine Minute Sprechen. Training für spontanes Sprechen."
+  }
+}
