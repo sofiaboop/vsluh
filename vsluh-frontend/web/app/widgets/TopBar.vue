@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SUPPORT } from '~/shared/constants/practice'
+import { FEATURES } from '~/shared/constants/features'
 
 const { t } = useI18n()
 const { backToTopics } = usePractice()
@@ -29,29 +30,36 @@ onMounted(() => {
     <div class="topbar-actions">
       <LanguagePicker />
 
-      <button v-if="isAuthenticated" class="auth-nav-button" type="button" @click="logout">
-        {{ t('auth.logout') }}
-      </button>
-      <div v-else class="auth-nav">
-        <button class="auth-nav-button" type="button" @click="openAuth('login')">
-          {{ t('auth.login') }}
+      <template v-if="FEATURES.auth">
+        <button v-if="isAuthenticated" class="auth-nav-button" type="button" @click="logout">
+          {{ t('auth.logout') }}
         </button>
-        <button
-          class="auth-nav-button auth-nav-button--register"
-          type="button"
-          @click="openAuth('register')"
-        >
-          {{ t('auth.register') }}
-        </button>
-      </div>
+        <div v-else class="auth-nav">
+          <button class="auth-nav-button" type="button" @click="openAuth('login')">
+            {{ t('auth.login') }}
+          </button>
+          <button
+            class="auth-nav-button auth-nav-button--register"
+            type="button"
+            @click="openAuth('register')"
+          >
+            {{ t('auth.register') }}
+          </button>
+        </div>
+      </template>
 
-      <button class="support-button" type="button" @click="supportOpen = true">
+      <button
+        v-if="FEATURES.support"
+        class="support-button"
+        type="button"
+        @click="supportOpen = true"
+      >
         {{ t('nav.support') }}
       </button>
     </div>
   </header>
 
-  <AuthDialog v-if="dialogMode" />
+  <AuthDialog v-if="FEATURES.auth && dialogMode" />
 
   <Teleport to="body">
     <div v-if="supportOpen" class="support-overlay" @click.self="close">

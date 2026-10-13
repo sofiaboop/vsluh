@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { FEATURES } from '~/shared/constants/features'
+
 const { t, tm, rt } = useI18n()
 const {
   stage,
@@ -17,6 +19,7 @@ const {
 
 const isSpeak = computed(() => stage.value === 'speak')
 const isDeep = computed(() => mode.value === 'deep')
+const showAnalysis = computed(() => FEATURES.analysis && analysisEnabled.value)
 
 const mood = computed(() => {
   if (moodIndex.value === null) return ''
@@ -62,16 +65,16 @@ const clock = computed(() => {
             </div>
           </div>
         </div>
-        <div v-if="!isDeep && (mood || analysisEnabled)" class="timer-indicators">
+        <div v-if="!isDeep && (mood || showAnalysis)" class="timer-indicators">
           <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
-          <AnalysisStatus v-if="analysisEnabled" :variant="isSpeak ? 'recording' : 'planned'" />
+          <AnalysisStatus v-if="showAnalysis" :variant="isSpeak ? 'recording' : 'planned'" />
         </div>
       </div>
     </div>
 
-    <div v-if="isDeep && (mood || analysisEnabled)" class="timer-footer-indicators">
+    <div v-if="isDeep && (mood || showAnalysis)" class="timer-footer-indicators">
       <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
-      <AnalysisStatus v-if="analysisEnabled" :variant="isSpeak ? 'recording' : 'planned'" />
+      <AnalysisStatus v-if="showAnalysis" :variant="isSpeak ? 'recording' : 'planned'" />
     </div>
 
     <div class="timer-actions">

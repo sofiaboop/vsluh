@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ANALYSIS_DEMO } from '~/shared/constants/analysis'
+import { FEATURES } from '~/shared/constants/features'
 
 const { t, tm, rt } = useI18n()
 const { analysisEnabled, again, repeatTopic, backToTopics } = usePractice()
@@ -20,7 +21,7 @@ const fillerWords = computed(() =>
     <h1>{{ t('finished.title') }}</h1>
     <p class="lead">{{ t('finished.lead') }}</p>
 
-    <div v-if="analysisEnabled" class="analysis-summary">
+    <div v-if="FEATURES.analysis && analysisEnabled" class="analysis-summary">
       <div class="analysis-summary-heading">
         <span>{{ t('analysis.kicker') }}</span>
         <strong>{{ t('analysis.title') }}</strong>
@@ -59,7 +60,7 @@ const fillerWords = computed(() =>
         </div>
       </div>
 
-      <div v-if="!isAuthenticated" class="analysis-auth-callout">
+      <div v-if="FEATURES.auth && !isAuthenticated" class="analysis-auth-callout">
         <p>{{ t('analysis.authCallout') }}</p>
         <button type="button" @click="openAuth('login')">{{ t('analysis.authCta') }}</button>
       </div>

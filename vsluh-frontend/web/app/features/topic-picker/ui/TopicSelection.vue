@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { MODES, TOPIC_IDS } from '~/shared/constants/practice'
+import { FEATURES } from '~/shared/constants/features'
 
 const { t } = useI18n()
 const { mode, selected, moodEnabled, analysisEnabled, allSelected, canContinue, toggleTopic, toggleAll, startWheel } =
@@ -81,7 +82,7 @@ const analysisTooltipOpen = ref(false)
         <div v-if="tooltipOpen" class="tooltip" role="tooltip">{{ t('mood.tooltip') }}</div>
       </div>
 
-      <div class="mood-control analysis-control">
+      <div v-if="FEATURES.analysis" class="mood-control analysis-control">
         <button
           type="button"
           class="toggle"
