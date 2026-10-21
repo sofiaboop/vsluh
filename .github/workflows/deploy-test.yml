@@ -2,7 +2,7 @@ name: Deploy test
 
 on:
   push:
-    branches: [test]
+    branches: [dev]
     paths:
       - 'vsluh-frontend/**'
       - '.github/workflows/deploy-test.yml'

@@ -1,0 +1,89 @@
+name: Deploy backend
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'vsluh-backend/**'
+      - 'manifest.yaml'
+      - 'variables/default/variables.yml'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Окружение
+        type: choice
+        options: [dev, prod]
+        default: dev
+
+concurrency:
+  group: deploy-backend-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: SAM deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}
+    env:
+      ENVIRONMENT: ${{ inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: vsluh-backend/**/go.sum
+
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Load CI variables
+        run: |
+          PREFIX="USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_"
+          yq -r '.common | to_entries[] | "\(.key)=\(.value)"' \
+            variables/default/variables.yml >> "$GITHUB_ENV"
+          yq -r '.backend | to_entries[] | "\(.key)=\(.value)"' \
+            variables/default/variables.yml \
+            | grep "^$PREFIX" | grep -v '=$' | sed "s/^$PREFIX//" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: sam build --template manifest.yaml
+
+      - name: Deploy
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets[format('USER_BACKEND_{0}_TELEGRAM_BOT_TOKEN', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
+        run: |
+          sam deploy \
+            --stack-name "$PROJECT_NAME-$ENVIRONMENT" \
+            --region "${{ vars.AWS_REGION }}" \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --tags "Product=$PROJECT_NAME" "Environment=$ENVIRONMENT" \
+            --parameter-overrides \
+              "ProjectName=$PROJECT_NAME" \
+              "Environment=$ENVIRONMENT" \
+              "AppVersion=${{ github.sha }}" \
+              "TelegramBotToken=$TELEGRAM_BOT_TOKEN" \
+              "DeletionProtectionEnabled=$DELETION_PROTECTION_ENABLED" \
+              "ThrottlingRateLimit=$THROTTLING_RATE_LIMIT" \
+              "ThrottlingBurstLimit=$THROTTLING_BURST_LIMIT"
+
+      - name: Stack outputs
+        run: |
+          aws cloudformation describe-stacks \
+            --stack-name "$PROJECT_NAME-$ENVIRONMENT" \
+            --query 'Stacks[0].Outputs' --output table

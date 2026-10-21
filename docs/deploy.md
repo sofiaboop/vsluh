@@ -72,11 +72,15 @@ Workflow поднимает Go-лямбды (`sam build`) и катит стек
 > и проверка `initData` в dev работать не будет.
 
 
-## Инфраструктура как код — чего нет
+## Инфраструктура как код — что где
 
-Terraform в проекте **нет**. Cloudflare (зона, DNS, SSL) и GitHub (репозитории, Pages,
-секреты, Actions) настроены вручную через API — командами из этого файла. Источник правды
-по инфраструктуре — таблицы ниже, а не стейт. Менять руками, сверяясь с `dig` и API.
+Terraform-конфигов в репозитории пока нет, но remote state уже поднят (см. выше) —
+новые компоненты описываем в Terraform и гоняем локально. AWS-ресурсы бэкенда
+описаны в `manifest.yaml` (SAM) и катятся из CI.
+
+Cloudflare (зона, DNS, SSL) и GitHub (репозитории, Pages, секреты, Actions) настроены
+вручную через API — командами из этого файла. Источник правды по ним — таблицы ниже,
+а не стейт. Менять руками, сверяясь с `dig` и API.
 
 ## Константы
 
@@ -130,7 +134,7 @@ npx serve .output/public
 ## Тестовый контур
 
 ```
-sofiaboop/vsluh, ветка test
+sofiaboop/vsluh, ветка dev
         │  push (paths: vsluh-frontend/**)
         ▼
 GitHub Actions: deploy-test.yml
@@ -154,13 +158,13 @@ sofiaboop/vsluh-test, ветка gh-pages   ← только артефакт, �
 
 | Что               | Значение                                                       |
 | ----------------- | -------------------------------------------------------------- |
-| Ветка исходников  | `test` в `sofiaboop/vsluh`                                       |
+| Ветка исходников  | `dev` в `sofiaboop/vsluh`                                       |
 | Репозиторий Pages | `sofiaboop/vsluh-test`, ветка `gh-pages`                         |
 | Pages source      | `branch gh-pages`, path `/`, build type `legacy`                 |
 | Домен             | `test.vsluh.club`, задан файлом `CNAME` в артефакте              |
 | DNS               | `CNAME test → sofiaboop.github.io`, `proxied: true`              |
 | Воркфлоу          | [deploy-test.yml](../.github/workflows/deploy-test.yml)          |
-| Триггер           | push в `test` по путям `vsluh-frontend/**`, плюс `workflow_dispatch` |
+| Триггер           | push в `dev` по путям `vsluh-frontend/**`, плюс `workflow_dispatch` |
 | Секрет            | `TEST_PAGES_TOKEN` в `sofiaboop/vsluh` — PAT для пуша в соседний репозиторий |
 
 Отличия сборки от прода:
@@ -179,24 +183,24 @@ GitHub для `test.vsluh.club` не нужен и `https_enforced` остаёт
 ### Как катим
 
 ```bash
-# 1. правка едет в test
-git checkout test
+# 1. правка едет в dev
+git checkout dev
 git commit -am "..."
-git push origin test
+git push origin dev
 
 # 2. смотрим https://test.vsluh.club
 
 # 3. только после проверки — в прод
-git checkout main && git merge --ff-only test && git push origin main
+git checkout main && git merge --ff-only dev && git push origin main
 ```
 
-Подтянуть в `test` то, что уже в `main` (например после хотфикса):
+Подтянуть в `dev` то, что уже в `main` (например после хотфикса):
 
 ```bash
-git checkout test && git merge --ff-only main && git push origin test
+git checkout dev && git merge --ff-only main && git push origin dev
 ```
 
-Откат теста — реверт коммита в `test` и пуш; `gh-pages` перезаписывается целиком
+Откат теста — реверт коммита в `dev` и пуш; `gh-pages` перезаписывается целиком
 каждым деплоем, отдельного отката артефакта не нужно.
 
 ### Проверка контура
