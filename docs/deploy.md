@@ -78,13 +78,33 @@ Workflow поднимает Go-лямбды (`sam build`) и катит стек
 
 ## Инфраструктура как код — что где
 
-Terraform-конфигов в репозитории пока нет, но remote state уже поднят (см. выше) —
-новые компоненты описываем в Terraform и гоняем локально. AWS-ресурсы бэкенда
-описаны в `manifest.yaml` (SAM) и катятся из CI.
+| Слой                                     | Чем описан                              |
+| ---------------------------------------- | --------------------------------------- |
+| Cloudflare: зона, DNS, TLS-настройки     | Terraform, `infra/cloudflare/vsluh.club` |
+| AWS: лямбды, API Gateway, DynamoDB       | SAM, `manifest.yaml`, катится из CI      |
+| GitHub: репозитории, Pages, секреты      | руками через API (провайдер не заведён)  |
 
-Cloudflare (зона, DNS, SSL) и GitHub (репозитории, Pages, секреты, Actions) настроены
-вручную через API — командами из этого файла. Источник правды по ним — таблицы ниже,
-а не стейт. Менять руками, сверяясь с `dig` и API.
+Раскладка каталогов повторяет `aimour`: `infra/<провайдер>/<ресурс>/` — по одному
+стейту на компонент, `backend "s3"` с ключом `<провайдер>/<ресурс>/terraform.tfstate`.
+
+### Cloudflare
+
+```bash
+set -a && source .envrc && set +a       # CLOUDFLARE_API_TOKEN + ключ vsluh-deploy
+cd infra/cloudflare/vsluh.club
+terraform init
+terraform plan                          # «No changes» — норма
+```
+
+Zone id не хардкодится, резолвится по имени через `data.cloudflare_zones`.
+Управляются только записи сайта (`apex`, `www`, `test`) и настройки TLS/перфа.
+Почта Namecheap (`MX`, SPF) и DS-запись DNSSEC намеренно вне стейта — их заводил
+регистратор, Terraform неуправляемые записи не трогает.
+
+Записи, заведённые руками до появления конфига, импортированы блоками `import`
+в [imports.tf](../infra/cloudflare/vsluh.club/imports.tf) с id из API.
+Новый ресурс, который уже существует в Cloudflare, добавляем так же: сначала
+`import`, потом `plan` до нуля изменений, и только затем `apply`.
 
 ## Константы
 
@@ -98,6 +118,7 @@ Cloudflare (зона, DNS, SSL) и GitHub (репозитории, Pages, сек
 
 ## DNS
 
+Описаны в [infra/cloudflare/vsluh.club/records.tf](../infra/cloudflare/vsluh.club/records.tf).
 Записи сайта **проксируются** Cloudflare (`proxied: true`):
 
 ```

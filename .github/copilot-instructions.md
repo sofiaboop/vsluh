@@ -126,7 +126,12 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
    git checkout dev && git commit && git push origin dev   # проверили на test.vsluh.club
    git checkout main && git merge --ff-only dev && git push origin main
    ```
-10. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
+10. **Инфраструктура — только Terraform.** Cloudflare, AWS вне SAM и всё остальное
+    описывается в `infra/<провайдер>/<ресурс>/` по раскладке из `aimour`, стейт —
+    удалённый (`s3://vsluh-tfstate-661609779996`, лок `vsluh-tflock`). Руками через
+    панели и API — только чтение и диагностика. Уже существующий ресурс заводится
+    через `import` с проверкой `plan` до нуля изменений.
+11. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
 
 ## Язык
 

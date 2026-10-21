@@ -4,6 +4,32 @@ applyTo: "manifest.yaml,infra/**,variables/**,.github/workflows/**"
 
 # Инфраструктура
 
+## Terraform (`infra/**`)
+
+Всё, кроме ресурсов SAM, описывается Terraform. Руками в панелях и через API —
+только разведка и диагностика, не изменения.
+
+- Раскладка как в `aimour`: `infra/<провайдер>/<ресурс>/`, один стейт на компонент.
+- Файлы делим по смыслу: `main.tf` (terraform + provider + backend), `data.tf`,
+  `variables.tf`, `imports.tf`, дальше по теме — `records.tf`, `settings.tf`.
+- Стейт только удалённый:
+
+  ```hcl
+  backend "s3" {
+    bucket         = "vsluh-tfstate-661609779996"
+    key            = "<провайдер>/<ресурс>/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "vsluh-tflock"
+    encrypt        = true
+  }
+  ```
+
+- Id зон и аккаунтов не хардкодим — резолвим через `data`.
+- Существующий ресурс сначала `import`, затем `plan` до нуля изменений,
+  и только потом `apply`. Любой неожиданный diff — повод разбираться, а не применять.
+- `terraform` гоняется локально под ключом `vsluh-deploy` из `.envrc`, не из CI.
+- `.terraform.lock.hcl` коммитим, `.terraform/` и `*.tfstate` — нет.
+
 ## SAM (`manifest.yaml`)
 
 - Runtime `provided.al2023`, `Architectures: [arm64]`, `Handler: bootstrap`.
