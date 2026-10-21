@@ -42,7 +42,8 @@ jobs:
         run: npm run generate
 
       - name: Close test site from indexing
-        run: printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
+        run: |
+          printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
 
       - name: Publish to sofiaboop/vsluh-test
         uses: peaceiris/actions-gh-pages@v4
