@@ -13,14 +13,15 @@
 | Путь                 | Что это                                           |
 | -------------------- | ------------------------------------------------- |
 | `vsluh-frontend/web` | Nuxt 4 — лендинг и Telegram Mini App одной сборкой |
-| `vsluh-backend`      | Go-лямбды, **заготовка**, в работу не берём       |
-| `manifest.yaml`      | AWS SAM, **заготовка**, не деплоится              |
+| `vsluh-backend`      | Go-лямбды, катятся в AWS через CI                 |
+| `manifest.yaml`      | AWS SAM — стеки `vsluh-dev` и `vsluh-prod`        |
 | `variables/default`  | Переменные CI                                     |
 
 ## Текущая стадия
 
-MVP: **только фронт**. Бэкенд и AWS не трогаем, пока не скажут.
-AWS-аккаунта нет — хостинг на GitHub Pages, сверху Cloudflare (DNS + прокси + TLS).
+Фронт на GitHub Pages (Cloudflare сверху — DNS, прокси, TLS), бэкенд в AWS:
+API Gateway + Go-лямбды + DynamoDB, два окружения — `dev` и `prod`.
+Деплой бэкенда только через CI, Terraform — локально.
 
 ## Секреты и токены
 
@@ -31,11 +32,12 @@ AWS-аккаунта нет — хостинг на GitHub Pages, сверху C
 set -a && source .envrc && set +a
 ```
 
-| Переменная             | Для чего                                                     |
-| ---------------------- | ------------------------------------------------------------ |
-| `CLOUDFLARE_API_TOKEN` | DNS зоны `vsluh.club`                                          |
-| `GITHUB_TOKEN`         | `sofiaboop/vsluh`, `sofiaboop/vsluh-test`, Pages, Actions, API |
-| `FIGMA_API_KEY`        | чтение макетов                                                 |
+| Переменная                                | Для чего                                                     |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| `CLOUDFLARE_API_TOKEN`                    | DNS зоны `vsluh.club`                                          |
+| `GITHUB_TOKEN`                            | `sofiaboop/vsluh`, `sofiaboop/vsluh-test`, Pages, Actions, API |
+| `FIGMA_API_KEY`                           | чтение макетов                                                 |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | IAM-пользователь `vsluh-deploy` — локальная работа с AWS   |
 
 Единственное жёсткое правило: значения не коммитить и не вставлять в файлы, которые уходят в git.
 
@@ -58,7 +60,10 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
 | Cloudflare NS домена  | `ivan.ns.cloudflare.com`, `paris.ns.cloudflare.com` |
 | DS-запись (DNSSEC)    | key tag `2371`, alg `13`, digest type `2`           |
 | Регистратор           | Namecheap                                           |
-| GitHub                | `sofiaboop/vsluh`, ветка `main`                     |
+| GitHub                | `sofiaboop/vsluh`, ветки `dev` и `main`             |
+| AWS-аккаунт           | `661609779996`, регион `eu-central-1`               |
+| Ключ CI в AWS         | IAM-пользователь `vsluh-ci`, в GitHub Secrets       |
+| Terraform state       | `s3://vsluh-tfstate-661609779996`, лок — `vsluh-tflock` |
 
 ## Домен и TLS
 
@@ -109,16 +114,17 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
    вроде `Invalid linked format` может стоять полностью сломанная локаль, которую визуально
    не видно. Задача не закрыта, пока в логах есть ошибки, предупреждения о расхождении
    гидратации и ненайденные ключи переводов.
-8. **Ветка `main` → прод.** Пуш в `main` выкатывает лендинг на `vsluh.club`.
-   Пуш в `test` выкатывает тестовый контур на `test.vsluh.club`
-   (репозиторий артефакта — `sofiaboop/vsluh-test`, ветка `gh-pages`).
-9. **Всё едет через тестовый контур.** Любая правка сначала уходит в ветку `test`,
+8. **Ветка `main` → прод.** Пуш в `main` выкатывает лендинг на `vsluh.club`
+   и стек `vsluh-prod` в AWS. Пуш в `dev` выкатывает тестовый контур
+   на `test.vsluh.club` (репозиторий артефакта — `sofiaboop/vsluh-test`,
+   ветка `gh-pages`) и стек `vsluh-dev`.
+9. **Всё едет через тестовый контур.** Любая правка сначала уходит в ветку `dev`,
    проверяется на `test.vsluh.club` — и только потом переносится в `main`.
    Прямые коммиты и пуши в `main` запрещены. Перенос — только `--ff-only`:
 
    ```bash
-   git checkout test && git commit && git push origin test   # проверили на test.vsluh.club
-   git checkout main && git merge --ff-only test && git push origin main
+   git checkout dev && git commit && git push origin dev   # проверили на test.vsluh.club
+   git checkout main && git merge --ff-only dev && git push origin main
    ```
 10. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
 
