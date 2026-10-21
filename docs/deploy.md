@@ -60,6 +60,44 @@ cd vsluh-frontend/web && npm ci && npm run generate
 npx serve .output/public
 ```
 
+## Тестовый контур
+
+```
+git push test → GitHub Actions (npm run generate) → sofiaboop/vsluh-test, ветка gh-pages
+                                                                  ↓
+                                                           GitHub Pages
+                                                                  ↑
+                                          Cloudflare (proxy, TLS) ┘
+                                                        ↑
+                                                test.vsluh.club
+```
+
+GitHub Pages отдаёт один сайт на репозиторий, поэтому под тест заведён отдельный
+репозиторий `sofiaboop/vsluh-test` — в нём лежит только собранный артефакт.
+Исходники остаются здесь, в ветке `test`.
+
+| Что               | Значение                                                        |
+| ----------------- | --------------------------------------------------------------- |
+| Ветка исходников  | `test` в `sofiaboop/vsluh`                                        |
+| Репозиторий Pages | `sofiaboop/vsluh-test`, ветка `gh-pages`                          |
+| Домен             | `test.vsluh.club`                                                 |
+| DNS               | `CNAME test → sofiaboop.github.io`, `proxied: true`               |
+| Воркфлоу          | [deploy-test.yml](../.github/workflows/deploy-test.yml)           |
+| Секрет            | `TEST_PAGES_TOKEN` — PAT для пуша в соседний репозиторий          |
+
+Отличия от прода:
+
+- `NUXT_PUBLIC_SITE_URL=https://test.vsluh.club`;
+- `robots.txt` перезаписывается на `Disallow: /`, чтобы тест не попал в поиск;
+- домен задан файлом `CNAME` в артефакте — при деплое из ветки это обязательно,
+  в отличие от прода, где домен хранится в настройках Pages.
+
+Обновление теста кодом из `main`:
+
+```bash
+git checkout test && git merge --ff-only main && git push origin test
+```
+
 ## Диагностика
 
 ```bash
