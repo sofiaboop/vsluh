@@ -31,13 +31,23 @@ AWS-аккаунта нет — хостинг на GitHub Pages, сверху C
 set -a && source .envrc && set +a
 ```
 
-| Переменная             | Для чего                             |
-| ---------------------- | ------------------------------------ |
-| `CLOUDFLARE_API_TOKEN` | DNS зоны `vsluh.club`                |
-| `GITHUB_TOKEN`         | репозиторий `sofiaboop/vsluh`, Pages |
-| `FIGMA_API_KEY`        | чтение макетов                       |
+| Переменная             | Для чего                                                     |
+| ---------------------- | ------------------------------------------------------------ |
+| `CLOUDFLARE_API_TOKEN` | DNS зоны `vsluh.club`                                          |
+| `GITHUB_TOKEN`         | `sofiaboop/vsluh`, `sofiaboop/vsluh-test`, Pages, Actions, API |
+| `FIGMA_API_KEY`        | чтение макетов                                                 |
 
 Единственное жёсткое правило: значения не коммитить и не вставлять в файлы, которые уходят в git.
+
+**GitHub — только через `GITHUB_TOKEN`.** Любая операция с GitHub (push, pull, API,
+секреты, Pages, Actions) идёт с этим токеном. Никаких `gh auth login`, keychain,
+SSH-ключей и запросов пароля. Ремоуты репозиториев уже прописаны с токеном —
+обычный `git push` работает сразу. Если где-то вылез `Authentication failed`
+или `No anonymous write access` — молча чинить ремоут токеном, а не спрашивать:
+
+```bash
+git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofiaboop/vsluh.git"
+```
 
 ## Константы инфраструктуры
 
@@ -102,7 +112,15 @@ set -a && source .envrc && set +a
 8. **Ветка `main` → прод.** Пуш в `main` выкатывает лендинг на `vsluh.club`.
    Пуш в `test` выкатывает тестовый контур на `test.vsluh.club`
    (репозиторий артефакта — `sofiaboop/vsluh-test`, ветка `gh-pages`).
-9. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
+9. **Всё едет через тестовый контур.** Любая правка сначала уходит в ветку `test`,
+   проверяется на `test.vsluh.club` — и только потом переносится в `main`.
+   Прямые коммиты и пуши в `main` запрещены. Перенос — только `--ff-only`:
+
+   ```bash
+   git checkout test && git commit && git push origin test   # проверили на test.vsluh.club
+   git checkout main && git merge --ff-only test && git push origin main
+   ```
+10. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
 
 ## Язык
 
