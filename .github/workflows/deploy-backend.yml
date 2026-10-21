@@ -65,6 +65,19 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets[format('USER_BACKEND_{0}_TELEGRAM_BOT_TOKEN', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
         run: |
+          PARAMS=(
+            "ProjectName=$PROJECT_NAME"
+            "Environment=$ENVIRONMENT"
+            "AppVersion=${{ github.sha }}"
+            "DeletionProtectionEnabled=$DELETION_PROTECTION_ENABLED"
+            "ThrottlingRateLimit=$THROTTLING_RATE_LIMIT"
+            "ThrottlingBurstLimit=$THROTTLING_BURST_LIMIT"
+          )
+          if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+            PARAMS+=("TelegramBotToken=$TELEGRAM_BOT_TOKEN")
+          else
+            echo "::warning::секрет USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_TELEGRAM_BOT_TOKEN не задан, стек поднимается без токена бота"
+          fi
           sam deploy \
             --stack-name "$PROJECT_NAME-$ENVIRONMENT" \
             --region "${{ vars.AWS_REGION }}" \
@@ -73,14 +86,7 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --tags "Product=$PROJECT_NAME" "Environment=$ENVIRONMENT" \
-            --parameter-overrides \
-              "ProjectName=$PROJECT_NAME" \
-              "Environment=$ENVIRONMENT" \
-              "AppVersion=${{ github.sha }}" \
-              "TelegramBotToken=$TELEGRAM_BOT_TOKEN" \
-              "DeletionProtectionEnabled=$DELETION_PROTECTION_ENABLED" \
-              "ThrottlingRateLimit=$THROTTLING_RATE_LIMIT" \
-              "ThrottlingBurstLimit=$THROTTLING_BURST_LIMIT"
+            --parameter-overrides "${PARAMS[@]}"
 
       - name: Stack outputs
         run: |
