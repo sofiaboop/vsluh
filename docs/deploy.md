@@ -53,10 +53,14 @@ terraform {
 
 ### Бэкенд через CI
 
-| Ветка  | Окружение | Стек         |
-| ------ | --------- | ------------ |
-| `dev`  | `dev`     | `vsluh-dev`  |
-| `main` | `prod`    | `vsluh-prod` |
+| Ветка  | Окружение | Стек         | API                                                      |
+| ------ | --------- | ------------ | -------------------------------------------------------- |
+| `dev`  | `dev`     | `vsluh-dev`  | `https://l9rmwlm921.execute-api.eu-central-1.amazonaws.com/dev`  |
+| `main` | `prod`    | `vsluh-prod` | `https://8wqkgr6sa0.execute-api.eu-central-1.amazonaws.com/prod` |
+
+Кастомные домены `api.vsluh.club` / `api-dev.vsluh.club` из
+[variables.yml](../variables/default/variables.yml) пока не настроены — API отвечает
+по адресу, который выдал API Gateway. Проверка живости: `GET /echo`.
 
 Workflow поднимает Go-лямбды (`sam build`) и катит стек (`sam deploy --resolve-s3`).
 Параметры стека собираются из [variables.yml](../variables/default/variables.yml)
