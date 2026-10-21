@@ -1,0 +1,55 @@
+name: Deploy test
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - 'vsluh-frontend/**'
+      - '.github/workflows/deploy-test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: pages-test
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: test
+      url: https://test.vsluh.club
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: vsluh-frontend/web/package-lock.json
+
+      - name: Install
+        working-directory: vsluh-frontend/web
+        run: npm ci
+
+      - name: Build
+        working-directory: vsluh-frontend/web
+        env:
+          NUXT_PUBLIC_SITE_URL: https://test.vsluh.club
+          NUXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+        run: npm run generate
+
+      - name: Close test site from indexing
+        run: printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
+
+      - name: Publish to sofiaboop/vsluh-test
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.TEST_PAGES_TOKEN }}
+          external_repository: sofiaboop/vsluh-test
+          publish_branch: gh-pages
+          publish_dir: vsluh-frontend/web/.output/public
+          cname: test.vsluh.club
+          commit_message: 'deploy: sofiaboop/vsluh@${{ github.sha }}'
