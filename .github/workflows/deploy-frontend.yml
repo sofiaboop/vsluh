@@ -37,9 +37,11 @@ jobs:
       - name: Прочитать переменные контура
         run: |
           PREFIX="USER_FRONTEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_"
-          yq -r '.common | to_entries | .[] | "\(.key)=\(.value)"' variables/default/variables.yml >> "$GITHUB_ENV"
-          yq -r ".frontend | to_entries | .[] | select(.key | test(\"^$PREFIX\")) | \"\(.key | sub(\"^$PREFIX\"; \"\"))=\(.value)\"" \
+          yq -r '.common | to_entries[] | "\(.key)=\(.value)"' \
             variables/default/variables.yml >> "$GITHUB_ENV"
+          yq -r '.frontend | to_entries[] | "\(.key)=\(.value)"' \
+            variables/default/variables.yml \
+            | grep "^$PREFIX" | grep -v '=$' | sed "s/^$PREFIX//" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
