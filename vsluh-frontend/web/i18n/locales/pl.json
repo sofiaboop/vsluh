@@ -84,6 +84,14 @@
       "text": "Analiza mowy kosztuje jeden kredyt. Doładuj saldo, aby przeanalizować kolejną odpowiedź.",
       "cta": "Doładuj saldo"
     },
+    "buy": {
+      "title": "Kup kredyty",
+      "lead": "Jeden kredyt to jedna analiza wypowiedzi. Kredyty nie wygasają.",
+      "pack": "{count} kredytów",
+      "price": "{price} ₽",
+      "cta": "Kup",
+      "soon": "Płatność pojawi się wkrótce. Na razie analizy działają na kredytach z prezentu."
+    },
     "checking": "Przygotowujemy analizę…",
     "error": "Nie udało się pobrać kredytu. Spróbuj jeszcze raz",
     "retry": "Spróbuj jeszcze raz"

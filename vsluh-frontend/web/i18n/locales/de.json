@@ -84,6 +84,14 @@
       "text": "Eine Sprachanalyse kostet einen Credit. Lade dein Guthaben auf, um die nächste Antwort zu analysieren.",
       "cta": "Guthaben aufladen"
     },
+    "buy": {
+      "title": "Credits kaufen",
+      "lead": "Ein Credit ist eine Sprachanalyse. Credits verfallen nicht.",
+      "pack": "{count} Credits",
+      "price": "{price} ₽",
+      "cta": "Kaufen",
+      "soon": "Die Bezahlung kommt bald. Bis dahin laufen Analysen über deine Geschenk-Credits."
+    },
     "checking": "Analyse wird vorbereitet…",
     "error": "Credit konnte nicht abgebucht werden. Versuch es noch einmal",
     "retry": "Noch einmal versuchen"

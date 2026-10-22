@@ -84,6 +84,14 @@
       "text": "Konuşma analizi bir krediye mal olur. Sonraki yanıtı analiz etmek için bakiyeni yükle.",
       "cta": "Bakiye yükle"
     },
+    "buy": {
+      "title": "Kredi satın al",
+      "lead": "Bir kredi, bir konuşma analizi demek. Krediler geçerliliğini yitirmez.",
+      "pack": "{count} kredi",
+      "price": "{price} ₽",
+      "cta": "Satın al",
+      "soon": "Ödeme yakında geliyor. Şimdilik analizler hediye kredilerinle çalışıyor."
+    },
     "checking": "Analiz hazırlanıyor…",
     "error": "Kredi düşülemedi. Tekrar dene",
     "retry": "Tekrar dene"

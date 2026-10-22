@@ -35,6 +35,7 @@ export function useAuth() {
   // Сколько кредитов подарили при регистрации. Число запоминаем отдельно от баланса:
   // поздравление должно говорить про подарок, а не про текущий остаток.
   const giftCredits = useState<number | null>('auth-gift', () => null)
+  const buyOpen = useState('credits-buy', () => false)
 
   const isAuthenticated = computed(() => user.value !== null)
   const userName = computed(() => user.value?.name ?? '')
@@ -105,12 +106,21 @@ export function useAuth() {
     giftCredits.value = null
   }
 
+  function openBuy() {
+    buyOpen.value = true
+  }
+
+  function closeBuy() {
+    buyOpen.value = false
+  }
+
   function logout() {
     clearAuthToken()
     user.value = null
     dialogMode.value = null
     errorKeyRef.value = null
     giftCredits.value = null
+    buyOpen.value = false
   }
 
   return {
@@ -119,6 +129,7 @@ export function useAuth() {
     userName,
     credits,
     giftCredits,
+    buyOpen,
     dialogMode,
     pending,
     errorKey: errorKeyRef,
@@ -127,6 +138,8 @@ export function useAuth() {
     submitAuth,
     setCredits,
     closeGift,
+    openBuy,
+    closeBuy,
     restoreSession,
     logout,
   }

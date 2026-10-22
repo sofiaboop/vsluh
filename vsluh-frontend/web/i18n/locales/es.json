@@ -84,6 +84,14 @@
       "text": "Un análisis de voz cuesta un crédito. Recarga tu saldo para analizar la siguiente respuesta.",
       "cta": "Recargar saldo"
     },
+    "buy": {
+      "title": "Comprar créditos",
+      "lead": "Un crédito es un análisis de tu discurso. Los créditos no caducan.",
+      "pack": "{count} créditos",
+      "price": "{price} ₽",
+      "cta": "Comprar",
+      "soon": "El pago estará disponible pronto. Por ahora los análisis usan tus créditos de regalo."
+    },
     "checking": "Preparando el análisis…",
     "error": "No se pudo descontar el crédito. Inténtalo de nuevo",
     "retry": "Intentar de nuevo"

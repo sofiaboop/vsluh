@@ -84,6 +84,14 @@
       "text": "Une analyse coûte un crédit. Recharge ton solde pour analyser la réponse suivante.",
       "cta": "Recharger le solde"
     },
+    "buy": {
+      "title": "Acheter des crédits",
+      "lead": "Un crédit, c’est une analyse de ta parole. Les crédits n’expirent pas.",
+      "pack": "{count} crédits",
+      "price": "{price} ₽",
+      "cta": "Acheter",
+      "soon": "Le paiement arrive bientôt. Pour l’instant, les analyses utilisent tes crédits offerts."
+    },
     "checking": "Préparation de l’analyse…",
     "error": "Impossible de débiter le crédit. Réessaie",
     "retry": "Réessayer"

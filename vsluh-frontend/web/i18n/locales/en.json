@@ -91,6 +91,14 @@
       "text": "A speech analysis costs one credit. Top up your balance to analyse the next answer.",
       "cta": "Top up balance"
     },
+    "buy": {
+      "title": "Buy credits",
+      "lead": "One credit is one speech analysis. Credits never expire.",
+      "pack": "{count} credits",
+      "price": "{price} ₽",
+      "cta": "Buy",
+      "soon": "Payment is coming soon. For now analyses run on your gift credits."
+    },
     "checking": "Preparing the analysis…",
     "error": "Could not spend a credit. Please try again",
     "retry": "Try again"

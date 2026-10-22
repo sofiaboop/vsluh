@@ -2,11 +2,10 @@
 import { ApiError } from '~/shared/api/apiInstance'
 import { spendCredit } from '~/shared/api/auth'
 import { ANALYSIS_DEMO } from '~/shared/constants/analysis'
-import { SUPPORT } from '~/shared/constants/practice'
 
 const { t, tm, rt } = useI18n()
 const { analysisEnabled, again, repeatTopic, backToTopics } = usePractice()
-const { isAuthenticated, setCredits, openAuth } = useAuth()
+const { isAuthenticated, setCredits, openAuth, openBuy } = useAuth()
 const features = useFeatures()
 
 /** idle — разбор ещё не оплачен, empty — кредиты кончились. */
@@ -104,9 +103,9 @@ const fillerWords = computed(() =>
     <div v-else-if="wantsAnalysis && state === 'empty'" class="analysis-auth-callout">
       <strong>{{ t('credits.empty.title') }}</strong>
       <p>{{ t('credits.empty.text') }}</p>
-      <a class="credits-buy" :href="SUPPORT.payUrl" rel="noreferrer" target="_blank">
+      <button class="credits-buy" type="button" @click="openBuy">
         {{ t('credits.empty.cta') }}
-      </a>
+      </button>
     </div>
 
     <div v-else-if="wantsAnalysis && state === 'error'" class="analysis-auth-callout">

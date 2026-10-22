@@ -84,6 +84,14 @@
       "text": "A análise de fala custa um crédito. Recarregue o saldo para analisar a próxima resposta.",
       "cta": "Recarregar saldo"
     },
+    "buy": {
+      "title": "Comprar créditos",
+      "lead": "Um crédito é uma análise da sua fala. Os créditos não expiram.",
+      "pack": "{count} créditos",
+      "price": "{price} ₽",
+      "cta": "Comprar",
+      "soon": "O pagamento chega em breve. Por enquanto as análises usam seus créditos de presente."
+    },
     "checking": "Preparando a análise…",
     "error": "Não foi possível debitar o crédito. Tente de novo",
     "retry": "Tentar de novo"

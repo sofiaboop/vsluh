@@ -1626,6 +1626,116 @@ h1 {
   box-shadow: 0 12px 26px #347fc83d;
 }
 
+.buy-overlay {
+  z-index: 60;
+  background: #0e14246b;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  display: flex;
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(6px);
+}
+
+.buy-dialog {
+  background: #fff;
+  border: 1px solid #0e14241a;
+  border-radius: 26px;
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100vh - 40px);
+  padding: 30px 26px 26px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 26px 60px #0e142426;
+}
+
+.buy-dialog h2 {
+  color: #1d2a3d;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.buy-lead {
+  color: #647c99;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.buy-packs {
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.buy-pack {
+  background: #f3f6fa;
+  border: 1px solid #0e14241a;
+  border-radius: 16px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  display: flex;
+}
+
+.buy-pack-info {
+  flex-direction: column;
+  gap: 2px;
+  display: flex;
+}
+
+.buy-pack-info strong {
+  color: #1d2a3d;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.buy-pack-info span {
+  color: #7d8ea4;
+  font-size: 12px;
+}
+
+.buy-pack-cta {
+  color: #fff;
+  cursor: pointer;
+  background: #5ea9ff;
+  border: 1px solid #347fc838;
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.16s,
+    box-shadow 0.16s,
+    transform 0.16s;
+  box-shadow: 0 9px 22px #347fc830;
+}
+
+.buy-pack-cta:hover {
+  background: #4d9bec;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px #347fc83d;
+}
+
+.buy-soon {
+  color: #526b86;
+  text-align: center;
+  background: #a7d6ff2b;
+  border: 1px solid #5ea9ff57;
+  border-radius: 14px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .gift-overlay {
   z-index: 60;
   background: #0e14246b;

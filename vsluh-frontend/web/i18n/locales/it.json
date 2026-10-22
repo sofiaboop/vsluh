@@ -84,6 +84,14 @@
       "text": "Un’analisi costa un credito. Ricarica il saldo per analizzare la prossima risposta.",
       "cta": "Ricarica il saldo"
     },
+    "buy": {
+      "title": "Acquista crediti",
+      "lead": "Un credito è un’analisi del tuo parlato. I crediti non scadono.",
+      "pack": "{count} crediti",
+      "price": "{price} ₽",
+      "cta": "Acquista",
+      "soon": "Il pagamento arriverà presto. Per ora le analisi usano i crediti in regalo."
+    },
     "checking": "Stiamo preparando l’analisi…",
     "error": "Non è stato possibile scalare il credito. Riprova",
     "retry": "Riprova"
