@@ -103,3 +103,28 @@ func (r *Users) SpendCredit(ctx context.Context, email string) (int, error) {
 	}
 	return updated.Credits, nil
 }
+
+// RefundCredit возвращает списанный кредит, когда разбор не состоялся.
+func (r *Users) RefundCredit(ctx context.Context, email string) (int, error) {
+	out, err := r.db.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+		TableName:           aws.String(r.table),
+		Key:                 map[string]types.AttributeValue{"email": &types.AttributeValueMemberS{Value: email}},
+		UpdateExpression:    aws.String("SET credits = credits + :one"),
+		ConditionExpression: aws.String("attribute_exists(email)"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":one": &types.AttributeValueMemberN{Value: "1"},
+		},
+		ReturnValues: types.ReturnValueUpdatedNew,
+	})
+	if err != nil {
+		return 0, fmt.Errorf("refund credit: %w", err)
+	}
+
+	var updated struct {
+		Credits int `dynamodbav:"credits"`
+	}
+	if err := attributevalue.UnmarshalMap(out.Attributes, &updated); err != nil {
+		return 0, fmt.Errorf("unmarshal credits: %w", err)
+	}
+	return updated.Credits, nil
+}

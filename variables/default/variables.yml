@@ -18,6 +18,8 @@ backend:
   USER_BACKEND_DEV_DASHSCOPE_API_KEY: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_DEV_DASHSCOPE_BASE_URL: https://dashscope-intl.aliyuncs.com
   USER_BACKEND_DEV_DASHSCOPE_ASR_MODEL: qwen-audio-3.0-asr-flash
+  # Текстовая модель для связного совета. Пусто — разбор остаётся на метриках.
+  USER_BACKEND_DEV_DASHSCOPE_LLM_MODEL: ''
 
   USER_BACKEND_PROD_ENVIRONMENT: prod
   USER_BACKEND_PROD_DELETION_PROTECTION_ENABLED: 'true'
@@ -28,6 +30,7 @@ backend:
   USER_BACKEND_PROD_DASHSCOPE_API_KEY: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_PROD_DASHSCOPE_BASE_URL: https://dashscope-intl.aliyuncs.com
   USER_BACKEND_PROD_DASHSCOPE_ASR_MODEL: qwen-audio-3.0-asr-flash
+  USER_BACKEND_PROD_DASHSCOPE_LLM_MODEL: ''
 
 frontend:
   USER_FRONTEND_DEV_SITE_URL: https://dev.vsluh.club

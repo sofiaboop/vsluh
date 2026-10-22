@@ -65,6 +65,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets[format('USER_BACKEND_{0}_TELEGRAM_BOT_TOKEN', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
           AUTH_JWT_SECRET: ${{ secrets[format('USER_BACKEND_{0}_AUTH_JWT_SECRET', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
+          DASHSCOPE_API_KEY: ${{ secrets[format('USER_BACKEND_{0}_DASHSCOPE_API_KEY', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
         run: |
           PARAMS=(
             "ProjectName=$PROJECT_NAME"
@@ -73,11 +74,19 @@ jobs:
             "DeletionProtectionEnabled=$DELETION_PROTECTION_ENABLED"
             "ThrottlingRateLimit=$THROTTLING_RATE_LIMIT"
             "ThrottlingBurstLimit=$THROTTLING_BURST_LIMIT"
+            "DashscopeBaseUrl=$DASHSCOPE_BASE_URL"
+            "DashscopeAsrModel=$DASHSCOPE_ASR_MODEL"
+            "DashscopeLlmModel=$DASHSCOPE_LLM_MODEL"
           )
           if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
             PARAMS+=("TelegramBotToken=$TELEGRAM_BOT_TOKEN")
           else
             echo "::warning::секрет USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_TELEGRAM_BOT_TOKEN не задан, стек поднимается без токена бота"
+          fi
+          if [ -n "$DASHSCOPE_API_KEY" ]; then
+            PARAMS+=("DashscopeApiKey=$DASHSCOPE_API_KEY")
+          else
+            echo "::warning::секрет USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_DASHSCOPE_API_KEY не задан, разбор речи будет отвечать 503"
           fi
           if [ -n "$AUTH_JWT_SECRET" ]; then
             PARAMS+=("AuthJwtSecret=$AUTH_JWT_SECRET")

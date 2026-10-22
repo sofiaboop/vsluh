@@ -21,6 +21,21 @@ Parameters:
     NoEcho: true
     Default: ''
     Description: Секрет подписи токенов сессии (HS256). Пустое значение отключает вход.
+  DashscopeApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: Ключ Alibaba Model Studio. Пустое значение отключает разбор речи.
+  DashscopeBaseUrl:
+    Type: String
+    Default: https://dashscope-intl.aliyuncs.com
+  DashscopeAsrModel:
+    Type: String
+    Default: qwen-audio-3.0-asr-flash
+  DashscopeLlmModel:
+    Type: String
+    Default: ''
+    Description: Текстовая модель для связного совета. Пусто — разбор остаётся на метриках.
   DeletionProtectionEnabled:
     Type: String
     AllowedValues: ['true', 'false']
@@ -108,6 +123,54 @@ Resources:
         - Key: Environment
           Value: !Ref Environment
 
+  ChecksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-${Environment}-checks'
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: !Ref DeletionProtectionEnabled
+      AttributeDefinitions:
+        - AttributeName: user_email
+          AttributeType: S
+        - AttributeName: sort_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_email
+          KeyType: HASH
+        - AttributeName: sort_key
+          KeyType: RANGE
+      Tags:
+        - Key: Product
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Записи ответов храним бессрочно: история практики — смысл личного кабинета.
+  AudioBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-${Environment}-audio-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: [GET]
+            AllowedOrigins: ['*']
+            AllowedHeaders: ['*']
+            MaxAge: 3000
+      Tags:
+        - Key: Product
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
   QuestionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -159,8 +222,14 @@ Resources:
           DYNAMODB_SESSIONS_TABLE_NAME: !Ref SessionsTable
           DYNAMODB_QUESTIONS_TABLE_NAME: !Ref QuestionsTable
           DYNAMODB_USERS_TABLE_NAME: !Ref UsersTable
+          DYNAMODB_CHECKS_TABLE_NAME: !Ref ChecksTable
+          AUDIO_BUCKET_NAME: !Ref AudioBucket
           TELEGRAM_BOT_TOKEN: !Ref TelegramBotToken
           AUTH_JWT_SECRET: !Ref AuthJwtSecret
+          DASHSCOPE_API_KEY: !Ref DashscopeApiKey
+          DASHSCOPE_BASE_URL: !Ref DashscopeBaseUrl
+          DASHSCOPE_ASR_MODEL: !Ref DashscopeAsrModel
+          DASHSCOPE_LLM_MODEL: !Ref DashscopeLlmModel
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionsTable
@@ -168,6 +237,10 @@ Resources:
             TableName: !Ref QuestionsTable
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ChecksTable
+        - S3CrudPolicy:
+            BucketName: !Ref AudioBucket
       Events:
         Proxy:
           Type: Api
@@ -186,3 +259,7 @@ Outputs:
     Value: !Ref QuestionsTable
   UsersTableName:
     Value: !Ref UsersTable
+  ChecksTableName:
+    Value: !Ref ChecksTable
+  AudioBucketName:
+    Value: !Ref AudioBucket
