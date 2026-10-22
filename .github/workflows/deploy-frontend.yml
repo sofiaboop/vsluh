@@ -76,15 +76,16 @@ jobs:
         env:
           BUCKET: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
           CC_IMMUTABLE: public, max-age=31536000, immutable
-          CC_REVALIDATE: no-cache, must-revalidate
-          CC_SHORT: public, max-age=300, must-revalidate
+          CC_REVALIDATE: public, max-age=0, s-maxage=86400, must-revalidate
+          CC_SHORT: public, max-age=300, s-maxage=300
         run: |
           # Хешированные ассеты — навсегда. --delete убирает хвосты прошлых сборок.
           aws s3 sync . "s3://$BUCKET" --delete \
             --cache-control "$CC_IMMUTABLE" \
             --exclude "*.html" --exclude "*payload.json" --exclude "robots.txt"
 
-          # HTML и payload обязаны перечитываться, иначе клиент залипнет на старой сборке.
+          # HTML и payload: браузер перечитывает каждый раз, edge держит сутки —
+          # свежесть обеспечивает инвалидация следующим шагом.
           aws s3 sync . "s3://$BUCKET" --exclude "*" --include "*.html" \
             --cache-control "$CC_REVALIDATE" --content-type "text/html; charset=utf-8"
           aws s3 sync . "s3://$BUCKET" --exclude "*" --include "*payload.json" \
@@ -93,16 +94,27 @@ jobs:
           aws s3 cp robots.txt "s3://$BUCKET/robots.txt" \
             --cache-control "$CC_SHORT" --content-type "text/plain; charset=utf-8"
 
-      - name: Проверить, что отдаётся свежая сборка
+      - name: Сбросить кеш CloudFront и проверить выкат
         env:
           DOMAIN: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
         run: |
-          # Инвалидации нет намеренно: html и payload залиты с no-cache,
-          # must-revalidate, остальное хешировано в имени и immutable —
-          # CloudFront уважает Cache-Control origin'а и отдаёт новое сразу.
+          DIST_ID=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?contains(Aliases.Items, '$DOMAIN')].Id | [0]" \
+            --output text)
+          if [ -z "$DIST_ID" ] || [ "$DIST_ID" = "None" ]; then
+            echo "не нашёл дистрибуцию для $DOMAIN" >&2
+            exit 1
+          fi
+
+          INV_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$DIST_ID" --paths '/*' \
+            --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$DIST_ID" --id "$INV_ID"
+
           CODE=$(curl -s -o /dev/null -w '%{http_code}' "https://$DOMAIN/")
           if [ "$CODE" != "200" ]; then
             echo "https://$DOMAIN/ отдаёт $CODE" >&2
             exit 1
           fi
-          echo "Выкачено на https://$DOMAIN" >> "$GITHUB_STEP_SUMMARY"
+          echo "Выкачено на https://$DOMAIN, кеш CloudFront $DIST_ID сброшен" >> "$GITHUB_STEP_SUMMARY"

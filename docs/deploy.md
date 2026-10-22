@@ -28,15 +28,18 @@ Cloudflare проксирует трафик и терминирует TLS св�
 | ----------------------- | --------------------------------------------------- |
 | Аккаунт                 | `661609779996` (management-аккаунт `o-wnp0oanxbp`)  |
 | Регион                  | `eu-central-1`                                      |
-| Доступ человека         | SSO-роль `AdministratorAccess` через access portal  |
+| Доступ человека         | SSO-роль `AdministratorAccess`, профиль `vsluh-admin` |
+| SSO                     | portal `https://d-c3676f6dfa.awsapps.com/start`, регион `eu-north-1` |
 | Локальный ключ          | IAM-пользователь `vsluh-deploy`, лежит в `.envrc`   |
 | Ключ CI                 | IAM-пользователь `vsluh-ci`, в GitHub Secrets       |
 | Terraform state         | `s3://vsluh-tfstate-661609779996`, блокировки — DynamoDB `vsluh-tflock` |
 | Бюджет-алерт            | `vsluh-monthly`, 20 USD/мес                         |
 
-Оба IAM-пользователя ограничены политиками с тем же именем: полный доступ к сервисам
-проекта (Lambda, API Gateway, DynamoDB, S3, CloudFront, CloudFormation, Logs),
-из IAM — только управление ролями лямбд. Админки IAM и ротации ключей у них нет.
+Оба IAM-пользователя ограничены политиками с тем же именем — они описаны в
+[infra/aws/iam](../infra/aws/iam) и только там меняются. `vsluh-ci` кроме сервисов
+проекта умеет писать в бакеты сайта и создавать инвалидации CloudFront;
+`vsluh-deploy` дополнительно управляет этими двумя политиками, чтобы Terraform
+гонялся локальным ключом без SSO. Админки IAM и ротации ключей у них нет.
 
 ### Terraform
 
@@ -121,6 +124,7 @@ POST /api/v1/services/aigc/multimodal-generation/generation
 | ---------------------------------------- | --------------------------------------- |
 | Cloudflare: зона и TLS-настройки         | Terraform, `infra/cloudflare/vsluh.club` |
 | S3 + CloudFront + ACM + запись сайта     | Terraform, `infra/cloudfront/<домен>`   |
+| AWS: политики `vsluh-ci` и `vsluh-deploy`  | Terraform, `infra/aws/iam`              |
 | AWS: лямбды, API Gateway, DynamoDB       | SAM, `manifest.yaml`, катится из CI      |
 | GitHub: репозиторий и секреты            | руками через API (провайдер не заведён)  |
 
@@ -213,17 +217,22 @@ CNAME  dev.vsluh.club   → d14ad7v88t1xys.cloudfront.net
 | Что                     | `Cache-Control`                        |
 | ----------------------- | -------------------------------------- |
 | `_nuxt/**` и прочие ассеты | `public, max-age=31536000, immutable` |
-| `*.html`, `*payload.json`  | `no-cache, must-revalidate`           |
-| `robots.txt`               | `public, max-age=300, must-revalidate` |
+| `*.html`, `*payload.json`  | `public, max-age=0, s-maxage=86400, must-revalidate` |
+| `robots.txt`               | `public, max-age=300, s-maxage=300`   |
 
 Имена ассетов хешированные, поэтому `--delete` в `sync` безопасен.
 
-Инвалидации CloudFront после выката нет и она не нужна: CloudFront уважает
-`Cache-Control` от origin'а, а html и payload залиты с `no-cache, must-revalidate`.
-Заодно это обходит дыру в правах: `cloudfront:CreateInvalidation` требует политики
-пользователя, а IAM-действия закрыты и для `vsluh-deploy`, и для `vsluh-ci`.
-Доступ CI к бакетам выдан поэтому политиками самих бакетов — они ресурсные
-и IAM-прав не требуют.
+Кеш работает на трёх уровнях: браузер (`max-age`), CloudFront и Cloudflare
+(`s-maxage`). HTML браузер перечитывает каждый раз, а edge держит сутки —
+поэтому после `aws s3 sync` CI создаёт инвалидацию `/*` и ждёт её завершения.
+Право `cloudfront:CreateInvalidation` и доступ к бакетам у `vsluh-ci` выданы
+политикой из [infra/aws/iam](../infra/aws/iam); политики самих бакетов отвечают
+только за чтение из CloudFront через OAC.
+
+Cloudflare `text/html` не кеширует ни при каких заголовках — это чинит правило
+`cache.tf` в `infra/cloudflare/vsluh.club`. Оно пока закомментировано: токену
+из `.envrc` нужны области `Zone → Cache Rules → Edit` и `Zone → Cache Purge →
+Purge`. До этого HTML кеширует только CloudFront.
 
 На тестовом контуре `robots.txt` перезаписывается на `Disallow: /`, чтобы
 `dev.vsluh.club` не попал в поиск.

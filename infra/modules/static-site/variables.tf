@@ -31,12 +31,6 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "ci_user_arn" {
-  description = "IAM-пользователь GitHub Actions, которому политика бакета разрешает выкат"
-  type        = string
-  default     = "arn:aws:iam::661609779996:user/vsluh-ci"
-}
-
 variable "price_class" {
   description = "Ценовой класс CloudFront; PriceClass_100 — США и Европа, нам хватает: трафик всё равно приходит через Cloudflare"
   type        = string

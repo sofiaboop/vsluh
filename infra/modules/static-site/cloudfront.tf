@@ -10,9 +10,11 @@ resource "aws_cloudfront_origin_access_control" "site" {
   signing_protocol                  = "sigv4"
 }
 
-# Кэшем управляем заголовками Cache-Control, которые проставляет CI при заливке
-# (хэшированные ассеты — immutable, html — must-revalidate). Managed-политика
-# CachingOptimized их уважает, поэтому своей политики не заводим.
+# Кешем управляем заголовками Cache-Control, которые проставляет CI при заливке:
+# хэшированные ассеты — `immutable` на год, html и payload — `max-age=0` для
+# браузера и `s-maxage=86400` для edge. Managed-политика CachingOptimized
+# уважает заголовки origin'а и сжимает ответы, поэтому своей не заводим.
+# После выката CI шлёт инвалидацию `/*`, иначе edge сутки отдавал бы старое.
 data "aws_cloudfront_cache_policy" "optimized" {
   name = "Managed-CachingOptimized"
 }

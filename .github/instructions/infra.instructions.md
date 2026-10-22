@@ -45,17 +45,22 @@ S3 + CloudFront + Cloudflare. Инфраструктура — модуль `inf
 Бакет приватный, читает только CloudFront через OAC; запись в Cloudflare создаёт
 тот же модуль, что и дистрибуцию, и всегда `proxied = true`.
 
-Выкат — `deploy-frontend.yml`. Кэш-политика:
+Выкат — `deploy-frontend.yml`. Кеш трёхуровневый — браузер, CloudFront, Cloudflare:
 
-| Путь                        | Cache-Control                               |
-| --------------------------- | ------------------------------------------- |
-| `/_nuxt/**` (хэш в имени)   | `public, max-age=31536000, immutable`       |
-| `*.html`, `*payload.json`   | `no-cache, must-revalidate`                 |
-| `/robots.txt`, `/sitemap*`  | `public, max-age=300, must-revalidate`      |
+| Путь                        | Cache-Control                                  |
+| --------------------------- | ---------------------------------------------- |
+| `/_nuxt/**` (хэш в имени)   | `public, max-age=31536000, immutable`          |
+| `*.html`, `*payload.json`   | `public, max-age=0, s-maxage=86400, must-revalidate` |
+| `/robots.txt`, `/sitemap*`  | `public, max-age=300, s-maxage=300`            |
 
-После `aws s3 sync` инвалидация не запускается: CloudFront уважает `Cache-Control`
-от origin'а, а html и payload лежат с `no-cache`. Доступ CI к бакетам выдан их
-собственными политиками: прав на IAM нет ни у `vsluh-deploy`, ни у `vsluh-ci`.
+HTML браузер перечитывает всегда, edge держит сутки; свежесть даёт инвалидация
+`/*`, которую CI шлёт сразу после `aws s3 sync` и дожидается её завершения.
+Права CI на бакеты и на `CreateInvalidation` лежат в `infra/aws/iam`, политики
+бакетов отвечают только за чтение из CloudFront.
+
+Cloudflare `text/html` по умолчанию не кеширует. Правило `cache.tf` в
+`infra/cloudflare/vsluh.club` это чинит, но пока выключено: токену нужны области
+`Cache Rules → Edit` и `Cache Purge → Purge`.
 
 ## Переменные
 
