@@ -76,8 +76,10 @@ jobs:
             "ThrottlingBurstLimit=$THROTTLING_BURST_LIMIT"
             "DashscopeBaseUrl=$DASHSCOPE_BASE_URL"
             "DashscopeAsrModel=$DASHSCOPE_ASR_MODEL"
-            "DashscopeLlmModel=$DASHSCOPE_LLM_MODEL"
           )
+          if [ -n "$DASHSCOPE_LLM_MODEL" ]; then
+            PARAMS+=("DashscopeLlmModel=$DASHSCOPE_LLM_MODEL")
+          fi
           if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
             PARAMS+=("TelegramBotToken=$TELEGRAM_BOT_TOKEN")
           else
