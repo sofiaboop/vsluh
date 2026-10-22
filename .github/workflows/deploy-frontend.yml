@@ -60,7 +60,8 @@ jobs:
 
       - name: Закрыть тестовый контур от индексации
         if: env.ENVIRONMENT != 'prod'
-        run: printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
+        run: |
+          printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
