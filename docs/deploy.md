@@ -68,12 +68,46 @@ Workflow поднимает Go-лямбды (`sam build`) и катит стек
 Ручной запуск с выбором окружения — через `workflow_dispatch`.
 
 Секреты репозитория: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-`USER_BACKEND_PROD_TELEGRAM_BOT_TOKEN`, `TEST_PAGES_TOKEN`.
+`USER_BACKEND_PROD_TELEGRAM_BOT_TOKEN`, `USER_BACKEND_DEV_DASHSCOPE_API_KEY`,
+`USER_BACKEND_PROD_DASHSCOPE_API_KEY`, `TEST_PAGES_TOKEN`.
 Переменные: `AWS_REGION`, `AWS_ACCOUNT_ID`.
 
 > Для `dev`-окружения секрет `USER_BACKEND_DEV_TELEGRAM_BOT_TOKEN` ещё не заведён —
 > нужен токен бота `vsluh_dev_bot`. Без него стек поднимется с пустым токеном
 > и проверка `initData` в dev работать не будет.
+
+## Распознавание речи — Alibaba Model Studio
+
+| Что      | Значение                                        |
+| -------- | ----------------------------------------------- |
+| Аккаунт  | `5673492054411126`, RAM-пользователь `vsluh`    |
+| Регион   | Сингапур (`ap-southeast-1`), контур `-intl`     |
+| Эндпоинт | `https://dashscope-intl.aliyuncs.com`           |
+| Модель   | `qwen-audio-3.0-asr-flash`                      |
+| Ключ     | `DASHSCOPE_API_KEY` в `.envrc`, в CI — `USER_BACKEND_{DEV\|PROD}_DASHSCOPE_API_KEY` |
+
+Регионы Model Studio изолированы: ключ сингапурского контура в Пекине отдаёт 401.
+Ключ workspace-scoped (`sk-ws-…`), открыт доступ только к включённым в workspace моделям —
+остальные отвечают `AccessDenied.Unpurchased`.
+
+Вызов — нативный мультимодальный эндпоинт, **не** OpenAI-совместимый:
+
+```http
+POST /api/v1/services/aigc/multimodal-generation/generation
+```
+
+```json
+{
+  "model": "qwen-audio-3.0-asr-flash",
+  "input": { "messages": [{ "role": "user", "content": [{ "audio": "<url или data:audio/wav;base64,…>" }] }] },
+  "parameters": { "format": "wav", "asr_options": { "language": "ru", "enable_lid": true, "enable_itn": true } }
+}
+```
+
+`parameters.format` обязателен — без него приходит `UNSUPPORTED_FORMAT: format is empty`,
+и он не читается из data-URI. Расшифровка лежит в `output.text`, потайминговая
+разбивка — в `output.sentence.words`, израсходованные секунды — в `usage.duration`.
+Русский проверен: распознаёт, расставляет пунктуацию.
 
 
 ## Инфраструктура как код — что где

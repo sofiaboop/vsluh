@@ -38,6 +38,7 @@ set -a && source .envrc && set +a
 | `GITHUB_TOKEN`                            | `sofiaboop/vsluh`, `sofiaboop/vsluh-test`, Pages, Actions, API |
 | `FIGMA_API_KEY`                           | чтение макетов                                                 |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | IAM-пользователь `vsluh-deploy` — локальная работа с AWS   |
+| `DASHSCOPE_API_KEY`                       | Alibaba Model Studio — распознавание речи (Сингапур)           |
 
 Единственное жёсткое правило: значения не коммитить и не вставлять в файлы, которые уходят в git.
 
@@ -64,6 +65,8 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
 | AWS-аккаунт           | `661609779996`, регион `eu-central-1`               |
 | Ключ CI в AWS         | IAM-пользователь `vsluh-ci`, в GitHub Secrets       |
 | Terraform state       | `s3://vsluh-tfstate-661609779996`, лок — `vsluh-tflock` |
+| Alibaba Model Studio  | аккаунт `5673492054411126`, Сингапур, `https://dashscope-intl.aliyuncs.com` |
+| Модель STT            | `qwen-audio-3.0-asr-flash`                          |
 
 ## Домен и TLS
 
