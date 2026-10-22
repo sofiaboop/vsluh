@@ -40,15 +40,20 @@ applyTo: "manifest.yaml,infra/**,variables/**,.github/workflows/**"
 
 ## Статика (лендинг и мини-апп)
 
-S3 + CloudFront. Кэш-политика:
+S3 + CloudFront + Cloudflare. Инфраструктура — модуль `infra/modules/static-site`,
+по корневому конфигу на домен: `infra/cloudfront/vsluh.club`, `infra/cloudfront/dev.vsluh.club`.
+Бакет приватный, читает только CloudFront через OAC; запись в Cloudflare создаёт
+тот же модуль, что и дистрибуцию, и всегда `proxied = true`.
+
+Выкат — `deploy-frontend.yml`. Кэш-политика:
 
 | Путь                        | Cache-Control                               |
 | --------------------------- | ------------------------------------------- |
 | `/_nuxt/**` (хэш в имени)   | `public, max-age=31536000, immutable`       |
-| `index.html`, `200.html`    | `no-cache, must-revalidate`                 |
-| `/robots.txt`, `/sitemap*`  | `public, max-age=300`                       |
+| `*.html`, `*payload.json`   | `no-cache, must-revalidate`                 |
+| `/robots.txt`, `/sitemap*`  | `public, max-age=300, must-revalidate`      |
 
-После `aws s3 sync` обязательна инвалидация CloudFront по `/index.html` и `/`.
+После `aws s3 sync` обязательна инвалидация CloudFront с ожиданием завершения.
 
 ## Переменные
 

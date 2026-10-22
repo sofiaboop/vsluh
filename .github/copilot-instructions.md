@@ -19,8 +19,8 @@
 
 ## Текущая стадия
 
-Фронт на GitHub Pages (Cloudflare сверху — DNS, прокси, TLS), бэкенд в AWS:
-API Gateway + Go-лямбды + DynamoDB, два окружения — `dev` и `prod`.
+Фронт — статика в S3 за CloudFront, снаружи Cloudflare (DNS, прокси, TLS).
+Бэкенд в AWS: API Gateway + Go-лямбды + DynamoDB. Два окружения — `dev` и `prod`.
 Деплой бэкенда только через CI, Terraform — локально.
 
 ## Секреты и токены
@@ -35,7 +35,7 @@ set -a && source .envrc && set +a
 | Переменная                                | Для чего                                                     |
 | ----------------------------------------- | ------------------------------------------------------------ |
 | `CLOUDFLARE_API_TOKEN`                    | DNS зоны `vsluh.club`                                          |
-| `GITHUB_TOKEN`                            | `sofiaboop/vsluh`, `sofiaboop/vsluh-test`, Pages, Actions, API |
+| `GITHUB_TOKEN`                            | `sofiaboop/vsluh`, Actions, API                                |
 | `FIGMA_API_KEY`                           | чтение макетов                                                 |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | IAM-пользователь `vsluh-deploy` — локальная работа с AWS   |
 | `DASHSCOPE_API_KEY`                       | Alibaba Model Studio — распознавание речи (Сингапур)           |
@@ -70,7 +70,7 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
 
 ## Домен и TLS
 
-Схема: `vsluh.club` → Cloudflare (прокси и TLS, режим `full`) → GitHub Pages.
+Схема: `vsluh.club` → Cloudflare (прокси и TLS, режим `full`) → CloudFront → S3.
 Все DNS-запись сайта проксируются (`proxied: true`).
 
 Уже один раз потеряли на этом полдня — не наступать повторно:
@@ -87,8 +87,9 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
    бесконечно — и у Cloudflare, и у GitHub.
 5. **`Always Use HTTPS` — только после выпуска сертификата.** Иначе редирект уводит
    посетителей на нерабочий протокол и кладёт сайт целиком.
-6. **Файл `CNAME` в `public/` не держим.** В артефакте он переустанавливает домен при каждом
-   деплое и сбрасывает выпуск сертификата. Домен задан в настройках Pages.
+6. **Cloudflare обязан проксировать записи сайта.** TLS для посетителя терминирует
+   Cloudflare, сертификат ACM на CloudFront виден только изнутри. Серая запись выдаст
+   наружу домен дистрибуции и уронит совпадение имени в сертификате.
 
 Полная хронология с командами — [docs/incidents/2026-10-09-dnssec-tls.md](../docs/incidents/2026-10-09-dnssec-tls.md).
 
@@ -119,8 +120,9 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
    гидратации и ненайденные ключи переводов.
 8. **Ветка `main` → прод.** Пуш в `main` выкатывает лендинг на `vsluh.club`
    и стек `vsluh-prod` в AWS. Пуш в `dev` выкатывает тестовый контур
-   на `test.vsluh.club` (репозиторий артефакта — `sofiaboop/vsluh-test`,
-   ветка `gh-pages`) и стек `vsluh-dev`.
+   на `dev.vsluh.club` и стек `vsluh-dev`. Статика обоих контуров лежит
+   в S3 (бакеты `vsluh.club` и `dev.vsluh.club`), раздаётся CloudFront,
+   снаружи стоит Cloudflare. GitHub Pages больше не используется.
 9. **Всё едет через тестовый контур.** Любая правка сначала уходит в ветку `dev`,
    проверяется на `test.vsluh.club` — и только потом переносится в `main`.
    Прямые коммиты и пуши в `main` запрещены. Перенос — только `--ff-only`:
@@ -134,7 +136,12 @@ git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/sofia
     удалённый (`s3://vsluh-tfstate-661609779996`, лок `vsluh-tflock`). Руками через
     панели и API — только чтение и диагностика. Уже существующий ресурс заводится
     через `import` с проверкой `plan` до нуля изменений.
-11. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
+11. **Лямбды, DynamoDB и API Gateway — только SAM из CI.** Весь бэкенд-стек описан
+    в `manifest.yaml` и катится workflow'ом `deploy-backend.yml` в `vsluh-dev`
+    и `vsluh-prod`. Руками `sam deploy`, правки стека через консоль AWS и описание
+    этих ресурсов в Terraform запрещены: источник истины один — SAM-шаблон.
+    Terraform отвечает за всё, что вне стека (Cloudflare, S3+CloudFront, стейт).
+12. **Не коммить сгенерированное**: `.nuxt/`, `.output/`, `dist`, `node_modules/`, `bootstrap`.
 
 ## Язык
 

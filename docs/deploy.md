@@ -3,17 +3,22 @@
 ## Схема
 
 ```
-git push main → GitHub Actions (npm run generate) → GitHub Pages
-                                                         ↑
-                                 Cloudflare (proxy, TLS) ┘
-                                          ↑
-                                     vsluh.club
+git push → GitHub Actions (npm run generate) → S3 → CloudFront → Cloudflare → домен
 ```
 
-Cloudflare проксирует трафик и терминирует TLS своим сертификатом.
-До GitHub Pages запрос идёт отдельным соединением по HTTPS (режим `Full`).
+| Ветка  | Контур | Бакет            | Дистрибуция     | Домен                      |
+| ------ | ------ | ---------------- | --------------- | -------------------------- |
+| `dev`  | dev    | `dev.vsluh.club` | `EK7DCB0N5ONL0` | `dev.vsluh.club`           |
+| `main` | prod   | `vsluh.club`     | `E2PDKIW0GX4CYJ` | `vsluh.club`, `www.vsluh.club` |
 
-AWS не используется для статики — лендинг живёт на GitHub Pages.
+Бакеты закрыты от интернета целиком: публичный доступ заблокирован, читать их
+может только CloudFront через Origin Access Control. Прямой S3-URL не работает —
+и это правильно.
+
+Cloudflare проксирует трафик и терминирует TLS своим сертификатом (режим `Full`),
+до CloudFront идёт отдельное HTTPS-соединение с сертификатом ACM из `us-east-1`.
+Записи сайта обязаны быть оранжевыми: серая выдаст наружу домен дистрибуции.
+
 Бэкенд (`manifest.yaml`, `vsluh-backend/`) катится в AWS-аккаунт `661609779996`
 через [deploy-backend.yml](../.github/workflows/deploy-backend.yml).
 
@@ -69,7 +74,7 @@ Workflow поднимает Go-лямбды (`sam build`) и катит стек
 
 Секреты репозитория: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
 `USER_BACKEND_PROD_TELEGRAM_BOT_TOKEN`, `USER_BACKEND_DEV_DASHSCOPE_API_KEY`,
-`USER_BACKEND_PROD_DASHSCOPE_API_KEY`, `TEST_PAGES_TOKEN`.
+`USER_BACKEND_PROD_DASHSCOPE_API_KEY`.
 Переменные: `AWS_REGION`, `AWS_ACCOUNT_ID`.
 
 > Для `dev`-окружения секрет `USER_BACKEND_DEV_TELEGRAM_BOT_TOKEN` ещё не заведён —
@@ -114,12 +119,29 @@ POST /api/v1/services/aigc/multimodal-generation/generation
 
 | Слой                                     | Чем описан                              |
 | ---------------------------------------- | --------------------------------------- |
-| Cloudflare: зона, DNS, TLS-настройки     | Terraform, `infra/cloudflare/vsluh.club` |
+| Cloudflare: зона и TLS-настройки         | Terraform, `infra/cloudflare/vsluh.club` |
+| S3 + CloudFront + ACM + запись сайта     | Terraform, `infra/cloudfront/<домен>`   |
 | AWS: лямбды, API Gateway, DynamoDB       | SAM, `manifest.yaml`, катится из CI      |
-| GitHub: репозитории, Pages, секреты      | руками через API (провайдер не заведён)  |
+| GitHub: репозиторий и секреты            | руками через API (провайдер не заведён)  |
 
 Раскладка каталогов повторяет `aimour`: `infra/<провайдер>/<ресурс>/` — по одному
 стейту на компонент, `backend "s3"` с ключом `<провайдер>/<ресурс>/terraform.tfstate`.
+Общая часть статического хостинга вынесена в модуль [infra/modules/static-site](../infra/modules/static-site).
+
+### Статический хостинг
+
+```bash
+set -a && source .envrc && set +a
+cd infra/cloudfront/dev.vsluh.club     # или infra/cloudfront/vsluh.club
+terraform init && terraform plan       # «No changes» — норма
+```
+
+Модуль поднимает закрытый бакет, сертификат ACM в `us-east-1` с DNS-валидацией,
+дистрибуцию с OAC и политикой заголовков безопасности и саму запись в Cloudflare.
+Запись сайта живёт в том же стейте, что и дистрибуция, иначе они разъезжаются.
+
+HSTS стоит на `max-age=300` — ступень лестницы. Поднимать только постепенно:
+ошибку в большом `max-age` у уже зашедших посетителей откатить нельзя.
 
 ### Cloudflare
 
@@ -131,14 +153,12 @@ terraform plan                          # «No changes» — норма
 ```
 
 Zone id не хардкодится, резолвится по имени через `data.cloudflare_zones`.
-Управляются только записи сайта (`apex`, `www`, `test`) и настройки TLS/перфа.
-Почта Namecheap (`MX`, SPF) и DS-запись DNSSEC намеренно вне стейта — их заводил
-регистратор, Terraform неуправляемые записи не трогает.
+Здесь остались только настройки зоны (TLS и перф): записи сайта уехали в стейты
+`infra/cloudfront/<домен>`. Почта Namecheap (`MX`, SPF) и DS-запись DNSSEC намеренно
+вне стейта — их заводил регистратор, Terraform неуправляемые записи не трогает.
 
-Записи, заведённые руками до появления конфига, импортированы блоками `import`
-в [imports.tf](../infra/cloudflare/vsluh.club/imports.tf) с id из API.
-Новый ресурс, который уже существует в Cloudflare, добавляем так же: сначала
-`import`, потом `plan` до нуля изменений, и только затем `apply`.
+Ресурс, который уже существует в облаке, добавляем только через `import`: сначала
+блок `import`, потом `plan` до нуля изменений, и только затем `apply`.
 
 ## Константы
 
@@ -152,14 +172,19 @@ Zone id не хардкодится, резолвится по имени чер
 
 ## DNS
 
-Описаны в [infra/cloudflare/vsluh.club/records.tf](../infra/cloudflare/vsluh.club/records.tf).
-Записи сайта **проксируются** Cloudflare (`proxied: true`):
+Записи сайта создаёт модуль статического хостинга
+([infra/modules/static-site/dns.tf](../infra/modules/static-site/dns.tf)) и **проксирует**
+их Cloudflare (`proxied: true`):
 
 ```
-A      vsluh.club       → 185.199.108.153 / .109.153 / .110.153 / .111.153
-CNAME  www.vsluh.club   → sofiaboop.github.io
-CNAME  test.vsluh.club  → sofiaboop.github.io
+CNAME  vsluh.club       → dkdwy3qlpoh8y.cloudfront.net
+CNAME  www.vsluh.club   → dkdwy3qlpoh8y.cloudfront.net
+CNAME  dev.vsluh.club   → d14ad7v88t1xys.cloudfront.net
 ```
+
+Апекс задан CNAME — Cloudflare умеет CNAME flattening и отдаёт на него свои адреса.
+Рядом лежат серые `_acme-challenge`-подобные записи валидации ACM: их прокси сломает,
+поэтому они намеренно `proxied: false`.
 
 Почта Namecheap (`MX` на `eforward*.registrar-servers.com` и `TXT` со SPF) не проксируется
 и к деплою отношения не имеет — не трогать.
@@ -178,10 +203,25 @@ CNAME  test.vsluh.club  → sofiaboop.github.io
 
 ## Выкат
 
-Пуш в `main` → [deploy-pages.yml](../.github/workflows/deploy-pages.yml) собирает
-`vsluh-frontend/web` и публикует в Pages. Кастомный домен задан в настройках Pages,
-файла `CNAME` в репозитории нет намеренно: в артефакте он переустанавливает домен
-при каждом деплое и сбрасывает выпуск сертификата.
+Пуш в `dev` или `main` → [deploy-frontend.yml](../.github/workflows/deploy-frontend.yml):
+`npm ci && npm run generate`, затем `aws s3 sync` в бакет контура и инвалидация CloudFront.
+Контур выбирается по ветке, переменные сборки берутся из `variables/default/variables.yml`.
+
+Кеш раскладывается тремя проходами — иначе клиент либо залипнет на старой сборке,
+либо будет каждый раз тянуть мегабайты ассетов заново:
+
+| Что                     | `Cache-Control`                        |
+| ----------------------- | -------------------------------------- |
+| `_nuxt/**` и прочие ассеты | `public, max-age=31536000, immutable` |
+| `*.html`, `*payload.json`  | `no-cache, must-revalidate`           |
+| `robots.txt`               | `public, max-age=300, must-revalidate` |
+
+Имена ассетов хешированные, поэтому `--delete` в `sync` безопасен. После заливки
+воркфлоу находит дистрибуцию по алиасу домена, запускает инвалидацию `/*`
+и ждёт её завершения.
+
+На тестовом контуре `robots.txt` перезаписывается на `Disallow: /`, чтобы
+`dev.vsluh.club` не попал в поиск.
 
 Локальная проверка сборки:
 
@@ -194,50 +234,43 @@ npx serve .output/public
 
 ```
 sofiaboop/vsluh, ветка dev
-        │  push (paths: vsluh-frontend/**)
+        │  push
         ▼
-GitHub Actions: deploy-test.yml
+GitHub Actions: deploy-frontend.yml
    npm ci → npm run generate → .output/public
-        │  peaceiris/actions-gh-pages, personal_token = TEST_PAGES_TOKEN
+        │  aws s3 sync + cloudfront create-invalidation
         ▼
-sofiaboop/vsluh-test, ветка gh-pages   ← только артефакт, исходников нет
-        │  Pages, source = branch gh-pages, домен из файла CNAME
+   s3://dev.vsluh.club  (приватный, читает только CloudFront через OAC)
         ▼
-   GitHub Pages (sofiaboop.github.io)
+   CloudFront EK7DCB0N5ONL0
         ▲
-        │  origin по HTTPS, SSL mode full
+        │  origin по HTTPS, SSL mode full, сертификат ACM
    Cloudflare (proxy + TLS)
         ▲
-   test.vsluh.club
+   dev.vsluh.club
 ```
 
-Почему отдельный репозиторий: GitHub Pages отдаёт **один сайт на репозиторий** с одним
-кастомным доменом. `sofiaboop/vsluh` уже занят продом на `vsluh.club`, поэтому тест
-живёт в `sofiaboop/vsluh-test`. Исходники там не дублируются — только собранная статика.
+Контур устроен ровно как прод — тот же модуль Terraform, тот же воркфлоу,
+отличаются только домен, бакет и дистрибуция. Отдельных репозиториев и артефактных
+веток больше нет: GitHub Pages выпилен целиком.
 
-| Что               | Значение                                                       |
-| ----------------- | -------------------------------------------------------------- |
-| Ветка исходников  | `dev` в `sofiaboop/vsluh`                                       |
-| Репозиторий Pages | `sofiaboop/vsluh-test`, ветка `gh-pages`                         |
-| Pages source      | `branch gh-pages`, path `/`, build type `legacy`                 |
-| Домен             | `test.vsluh.club`, задан файлом `CNAME` в артефакте              |
-| DNS               | `CNAME test → sofiaboop.github.io`, `proxied: true`              |
-| Воркфлоу          | [deploy-test.yml](../.github/workflows/deploy-test.yml)          |
-| Триггер           | push в `dev` по путям `vsluh-frontend/**`, плюс `workflow_dispatch` |
-| Секрет            | `TEST_PAGES_TOKEN` в `sofiaboop/vsluh` — PAT для пуша в соседний репозиторий |
+| Что              | Значение                                                        |
+| ---------------- | --------------------------------------------------------------- |
+| Ветка исходников | `dev` в `sofiaboop/vsluh`                                         |
+| Бакет            | `dev.vsluh.club`                                                  |
+| Дистрибуция      | `EK7DCB0N5ONL0`                                                   |
+| DNS              | `CNAME dev → d14ad7v88t1xys.cloudfront.net`, `proxied: true`      |
+| Terraform        | [infra/cloudfront/dev.vsluh.club](../infra/cloudfront/dev.vsluh.club) |
+| Воркфлоу         | [deploy-frontend.yml](../.github/workflows/deploy-frontend.yml)   |
+| Триггер          | push в `dev`, плюс `workflow_dispatch`                            |
 
 Отличия сборки от прода:
 
-- `NUXT_PUBLIC_SITE_URL=https://test.vsluh.club`;
-- `robots.txt` перезаписывается на `Disallow: /`, чтобы тест не попал в поиск;
-- домен задан файлом `CNAME` внутри артефакта. Для прода это запрещено (артефакт
-  Actions переустанавливает домен и сбрасывает сертификат), а для деплоя из ветки —
-  единственный способ: без `CNAME` в `gh-pages` Pages сбросит кастомный домен.
+- `NUXT_PUBLIC_SITE_URL=https://dev.vsluh.club`;
+- `robots.txt` перезаписывается на `Disallow: /`, чтобы тест не попал в поиск.
 
-TLS тот же, что на проде: сертификат Cloudflare (Universal SSL покрывает `*.vsluh.club`),
-до GitHub Pages — отдельное HTTPS-соединение в режиме `full`. Собственный сертификат
-GitHub для `test.vsluh.club` не нужен и `https_enforced` остаётся `false` — редирект
-на HTTPS делает Cloudflare.
+TLS тот же, что на проде: Universal SSL от Cloudflare покрывает `*.vsluh.club`,
+до CloudFront — отдельное HTTPS-соединение с сертификатом ACM.
 
 ### Как катим
 
@@ -247,7 +280,7 @@ git checkout dev
 git commit -am "..."
 git push origin dev
 
-# 2. смотрим https://test.vsluh.club
+# 2. смотрим https://dev.vsluh.club
 
 # 3. только после проверки — в прод
 git checkout main && git merge --ff-only dev && git push origin main
@@ -259,8 +292,8 @@ git checkout main && git merge --ff-only dev && git push origin main
 git checkout dev && git merge --ff-only main && git push origin dev
 ```
 
-Откат теста — реверт коммита в `dev` и пуш; `gh-pages` перезаписывается целиком
-каждым деплоем, отдельного отката артефакта не нужно.
+Откат — реверт коммита в ветке и пуш: бакет перезаписывается целиком каждым
+деплоем (`sync --delete`), отдельного отката артефакта не нужно.
 
 ### Проверка контура
 
@@ -268,16 +301,17 @@ git checkout dev && git merge --ff-only main && git push origin dev
 set -a && source .envrc && set +a
 
 # что отдаёт тест
-curl -sI https://test.vsluh.club/ | head -3
-curl -s https://test.vsluh.club/robots.txt
+curl -sI https://dev.vsluh.club/ | head -3
+curl -s https://dev.vsluh.club/robots.txt
 
 # последние запуски деплоя
 curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-  "https://api.github.com/repos/sofiaboop/vsluh/actions/workflows/deploy-test.yml/runs?per_page=3" \
+  "https://api.github.com/repos/sofiaboop/vsluh/actions/workflows/deploy-frontend.yml/runs?per_page=3" \
   | python3 -c 'import json,sys;[print(r["head_branch"],r["status"],r["conclusion"],r["html_url"]) for r in json.load(sys.stdin)["workflow_runs"]]'
 
-# настройки Pages тестового репозитория
-curl -s -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/sofiaboop/vsluh-test/pages
+# что реально лежит в бакете и какой у объектов кеш
+aws s3 ls s3://dev.vsluh.club --recursive | head
+aws s3api head-object --bucket dev.vsluh.club --key index.html --query CacheControl
 ```
 
 ## Диагностика

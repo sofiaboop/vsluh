@@ -1,0 +1,109 @@
+name: deploy-frontend
+
+# Статика Nuxt едет в S3, раздаётся CloudFront, снаружи стоит Cloudflare.
+# Ветка решает контур: dev -> dev.vsluh.club, main -> vsluh.club.
+# Инфраструктуру (бакет, дистрибуция, сертификат, DNS) workflow не трогает —
+# она живёт в Terraform: infra/cloudfront/<домен>.
+
+on:
+  push:
+    branches: [dev, main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Контур для выката
+        type: choice
+        options: [dev, prod]
+        default: dev
+
+concurrency:
+  group: deploy-frontend-${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Выбрать контур
+        run: |
+          ENVIRONMENT="${{ inputs.environment || (github.ref_name == 'main' && 'prod' || 'dev') }}"
+          echo "ENVIRONMENT=$ENVIRONMENT" >> "$GITHUB_ENV"
+
+      - name: Прочитать переменные контура
+        run: |
+          PREFIX="USER_FRONTEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_"
+          yq -r '.common | to_entries | .[] | "\(.key)=\(.value)"' variables/default/variables.yml >> "$GITHUB_ENV"
+          yq -r ".frontend | to_entries | .[] | select(.key | test(\"^$PREFIX\")) | \"\(.key | sub(\"^$PREFIX\"; \"\"))=\(.value)\"" \
+            variables/default/variables.yml >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: vsluh-frontend/web/package-lock.json
+
+      - name: Собрать статику
+        working-directory: vsluh-frontend/web
+        env:
+          NUXT_PUBLIC_SITE_URL: ${{ env.SITE_URL }}
+          NUXT_PUBLIC_API_URL: ${{ env.API_URL }}
+          NUXT_PUBLIC_BOT_NAME: ${{ env.BOT_NAME }}
+          NUXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+        run: |
+          npm ci
+          npm run generate
+
+      - name: Закрыть тестовый контур от индексации
+        if: env.ENVIRONMENT != 'prod'
+        run: printf 'User-agent: *\nDisallow: /\n' > vsluh-frontend/web/.output/public/robots.txt
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Залить в S3
+        working-directory: vsluh-frontend/web/.output/public
+        env:
+          BUCKET: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
+          CC_IMMUTABLE: public, max-age=31536000, immutable
+          CC_REVALIDATE: no-cache, must-revalidate
+          CC_SHORT: public, max-age=300, must-revalidate
+        run: |
+          # Хешированные ассеты — навсегда. --delete убирает хвосты прошлых сборок.
+          aws s3 sync . "s3://$BUCKET" --delete \
+            --cache-control "$CC_IMMUTABLE" \
+            --exclude "*.html" --exclude "*payload.json" --exclude "robots.txt"
+
+          # HTML и payload обязаны перечитываться, иначе клиент залипнет на старой сборке.
+          aws s3 sync . "s3://$BUCKET" --exclude "*" --include "*.html" \
+            --cache-control "$CC_REVALIDATE" --content-type "text/html; charset=utf-8"
+          aws s3 sync . "s3://$BUCKET" --exclude "*" --include "*payload.json" \
+            --cache-control "$CC_REVALIDATE" --content-type "application/json; charset=utf-8"
+
+          aws s3 cp robots.txt "s3://$BUCKET/robots.txt" \
+            --cache-control "$CC_SHORT" --content-type "text/plain; charset=utf-8"
+
+      - name: Сбросить кеш CloudFront
+        env:
+          DOMAIN: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
+        run: |
+          DIST_ID=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?contains(Aliases.Items, '$DOMAIN')].Id | [0]" \
+            --output text)
+          if [ -z "$DIST_ID" ] || [ "$DIST_ID" = "None" ]; then
+            echo "Не нашёл дистрибуцию для $DOMAIN — проверь infra/cloudfront/$DOMAIN" >&2
+            exit 1
+          fi
+          INVALIDATION=$(aws cloudfront create-invalidation \
+            --distribution-id "$DIST_ID" --paths '/*' \
+            --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$DIST_ID" --id "$INVALIDATION"
+          echo "Выкачено на https://$DOMAIN (дистрибуция $DIST_ID)" >> "$GITHUB_STEP_SUMMARY"

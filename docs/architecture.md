@@ -28,7 +28,7 @@
 ## Компоненты
 
 ```
-vsluh.club        Nuxt (статика, GitHub Pages)  →  лендинг и Telegram Mini App
+vsluh.club        Nuxt (статика, S3 + CloudFront)  →  лендинг и Telegram Mini App
 api.vsluh.club    API Gateway → Go Lambda         →  REST API (заготовка)
                                     ↓
                                 DynamoDB
