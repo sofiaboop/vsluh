@@ -65,6 +65,8 @@ export default defineNuxtConfig({
       botName: process.env.NUXT_PUBLIC_BOT_NAME || '',
       // вход обкатывается на dev раньше, чем включается на проде
       featureAuth: process.env.NUXT_PUBLIC_FEATURE_AUTH === 'true',
+      // разбор речи тратит кредиты, поэтому включается вместе с входом
+      featureAnalysis: process.env.NUXT_PUBLIC_FEATURE_ANALYSIS === 'true',
       appVersion: process.env.NUXT_PUBLIC_APP_VERSION || 'local',
     },
   },

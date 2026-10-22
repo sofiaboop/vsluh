@@ -78,6 +78,23 @@
       "network": "Could not reach the server. Please try again"
     }
   },
+  "credits": {
+    "badge": "Credits: {count}",
+    "hint": "One speech analysis costs one credit",
+    "gift": {
+      "title": "{count} credits as a gift",
+      "text": "That's {count} speech analyses. Turn on «Answer analysis» before practice and use them right away.",
+      "cta": "Great"
+    },
+    "empty": {
+      "title": "You are out of credits",
+      "text": "A speech analysis costs one credit. Top up your balance to analyse the next answer.",
+      "cta": "Top up balance"
+    },
+    "checking": "Preparing the analysis…",
+    "error": "Could not spend a credit. Please try again",
+    "retry": "Try again"
+  },
   "analysis": {
     "toggle": "Answer analysis",
     "help": "What answer analysis means",

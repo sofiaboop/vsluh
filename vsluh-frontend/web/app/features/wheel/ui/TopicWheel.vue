@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { WHEEL } from '~/shared/constants/practice'
-import { FEATURES } from '~/shared/constants/features'
 import { playTick } from '~/shared/lib/sound'
 
 const { t, tm, rt } = useI18n()
+const features = useFeatures()
 const {
   rows,
   spinning,
@@ -111,7 +111,7 @@ function setWinnerRef(el: Element | ComponentPublicInstance | null) {
 
     <div class="wheel-statuses">
       <div v-if="mood" class="mood-pill"><span class="mood-dot" />{{ mood }}</div>
-      <AnalysisStatus v-if="FEATURES.analysis && analysisEnabled" variant="planned" />
+      <AnalysisStatus v-if="features.analysis && analysisEnabled" variant="planned" />
     </div>
 
     <div class="wheel-actions">

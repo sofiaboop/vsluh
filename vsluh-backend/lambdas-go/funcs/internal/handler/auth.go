@@ -72,6 +72,7 @@ func Register(ctx context.Context, req events.APIGatewayProxyRequest) (events.AP
 		Name:         name,
 		PasswordHash: hash,
 		CreatedAt:    time.Now().Unix(),
+		Credits:      domain.SignupCredits,
 	}
 	if err := users.Create(ctx, user); err != nil {
 		if errors.Is(err, repo.ErrEmailTaken) {

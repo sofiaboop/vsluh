@@ -71,6 +71,23 @@
       "network": "Sunucuya ulaşılamadı. Tekrar dene"
     }
   },
+  "credits": {
+    "badge": "Kredi: {count}",
+    "hint": "Bir konuşma analizi bir krediye mal olur",
+    "gift": {
+      "title": "{count} kredi hediye",
+      "text": "Bu {count} konuşma analizi demek. Pratikten önce «Yanıt analizi»ni aç ve hemen kullan.",
+      "cta": "Harika"
+    },
+    "empty": {
+      "title": "Kredilerin bitti",
+      "text": "Konuşma analizi bir krediye mal olur. Sonraki yanıtı analiz etmek için bakiyeni yükle.",
+      "cta": "Bakiye yükle"
+    },
+    "checking": "Analiz hazırlanıyor…",
+    "error": "Kredi düşülemedi. Tekrar dene",
+    "retry": "Tekrar dene"
+  },
   "analysis": {
     "toggle": "Cevap analizi",
     "help": "Cevap analizi ne demek",

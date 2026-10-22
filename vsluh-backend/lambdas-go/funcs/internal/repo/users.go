@@ -17,6 +17,9 @@ import (
 // ErrEmailTaken — адрес уже зарегистрирован.
 var ErrEmailTaken = errors.New("email already registered")
 
+// ErrNoCredits — на балансе нечего списывать.
+var ErrNoCredits = errors.New("not enough credits")
+
 // Users хранит учётные записи: ключ таблицы — нормализованный email.
 type Users struct {
 	db    *dynamodb.Client
@@ -69,4 +72,34 @@ func (r *Users) ByEmail(ctx context.Context, email string) (domain.User, bool, e
 		return domain.User{}, false, fmt.Errorf("unmarshal user: %w", err)
 	}
 	return user, true, nil
+}
+
+// SpendCredit списывает один кредит и возвращает остаток. Проверка баланса
+// живёт в условии записи: два параллельных разбора не должны увести в минус.
+func (r *Users) SpendCredit(ctx context.Context, email string) (int, error) {
+	out, err := r.db.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+		TableName:           aws.String(r.table),
+		Key:                 map[string]types.AttributeValue{"email": &types.AttributeValueMemberS{Value: email}},
+		UpdateExpression:    aws.String("SET credits = credits - :one"),
+		ConditionExpression: aws.String("attribute_exists(email) AND credits >= :one"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":one": &types.AttributeValueMemberN{Value: "1"},
+		},
+		ReturnValues: types.ReturnValueUpdatedNew,
+	})
+	if err != nil {
+		var conflict *types.ConditionalCheckFailedException
+		if errors.As(err, &conflict) {
+			return 0, ErrNoCredits
+		}
+		return 0, fmt.Errorf("spend credit: %w", err)
+	}
+
+	var updated struct {
+		Credits int `dynamodbav:"credits"`
+	}
+	if err := attributevalue.UnmarshalMap(out.Attributes, &updated); err != nil {
+		return 0, fmt.Errorf("unmarshal credits: %w", err)
+	}
+	return updated.Credits, nil
 }

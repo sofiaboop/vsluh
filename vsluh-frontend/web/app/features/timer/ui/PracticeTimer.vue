@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { FEATURES } from '~/shared/constants/features'
-
 const { t, tm, rt } = useI18n()
+const features = useFeatures()
 const {
   stage,
   mode,
@@ -19,7 +18,7 @@ const {
 
 const isSpeak = computed(() => stage.value === 'speak')
 const isDeep = computed(() => mode.value === 'deep')
-const showAnalysis = computed(() => FEATURES.analysis && analysisEnabled.value)
+const showAnalysis = computed(() => features.value.analysis && analysisEnabled.value)
 
 const mood = computed(() => {
   if (moodIndex.value === null) return ''

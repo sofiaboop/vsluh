@@ -12,6 +12,9 @@ const MinPasswordLen = 6
 // MaxNameLen ограничивает отображаемое имя, чтобы оно помещалось в интерфейс.
 const MaxNameLen = 64
 
+// SignupCredits — подарок за регистрацию: три разбора аудиодорожки.
+const SignupCredits = 3
+
 var (
 	ErrInvalidEmail    = errors.New("invalid email")
 	ErrInvalidPassword = errors.New("password is too short")
@@ -29,6 +32,9 @@ type User struct {
 	Name         string `json:"name"       dynamodbav:"name"`
 	PasswordHash string `json:"-"          dynamodbav:"password_hash"`
 	CreatedAt    int64  `json:"created_at" dynamodbav:"created_at"`
+	// Credits — остаток разборов речи. У записей, созданных до появления
+	// баланса, атрибута нет, и DynamoDB вернёт ноль — это верное поведение.
+	Credits int `json:"credits" dynamodbav:"credits"`
 }
 
 // NormalizeEmail приводит адрес к ключу таблицы: регистр и пробелы не различаем.

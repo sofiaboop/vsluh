@@ -71,6 +71,23 @@
       "network": "Impossibile contattare il server. Riprova"
     }
   },
+  "credits": {
+    "badge": "Crediti: {count}",
+    "hint": "Un’analisi del parlato costa un credito",
+    "gift": {
+      "title": "{count} crediti in regalo",
+      "text": "Sono {count} analisi del tuo parlato. Attiva «Analisi della risposta» prima della pratica e usali subito.",
+      "cta": "Ottimo"
+    },
+    "empty": {
+      "title": "Hai finito i crediti",
+      "text": "Un’analisi costa un credito. Ricarica il saldo per analizzare la prossima risposta.",
+      "cta": "Ricarica il saldo"
+    },
+    "checking": "Stiamo preparando l’analisi…",
+    "error": "Non è stato possibile scalare il credito. Riprova",
+    "retry": "Riprova"
+  },
   "analysis": {
     "toggle": "Analisi della risposta",
     "help": "Cosa significa l'analisi della risposta",

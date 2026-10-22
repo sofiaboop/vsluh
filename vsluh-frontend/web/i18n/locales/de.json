@@ -71,6 +71,23 @@
       "network": "Der Server ist nicht erreichbar. Versuche es erneut"
     }
   },
+  "credits": {
+    "badge": "Credits: {count}",
+    "hint": "Eine Sprachanalyse kostet einen Credit",
+    "gift": {
+      "title": "{count} Credits geschenkt",
+      "text": "Das sind {count} Analysen deiner Rede. Schalte vor der Übung «Antwortanalyse» ein und nutze sie sofort.",
+      "cta": "Super"
+    },
+    "empty": {
+      "title": "Deine Credits sind aufgebraucht",
+      "text": "Eine Sprachanalyse kostet einen Credit. Lade dein Guthaben auf, um die nächste Antwort zu analysieren.",
+      "cta": "Guthaben aufladen"
+    },
+    "checking": "Analyse wird vorbereitet…",
+    "error": "Credit konnte nicht abgebucht werden. Versuch es noch einmal",
+    "retry": "Noch einmal versuchen"
+  },
   "analysis": {
     "toggle": "Antwortanalyse",
     "help": "Was die Antwortanalyse bedeutet",

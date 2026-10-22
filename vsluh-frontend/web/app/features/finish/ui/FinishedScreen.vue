@@ -1,10 +1,45 @@
 <script setup lang="ts">
+import { ApiError } from '~/shared/api/apiInstance'
+import { spendCredit } from '~/shared/api/auth'
 import { ANALYSIS_DEMO } from '~/shared/constants/analysis'
+import { SUPPORT } from '~/shared/constants/practice'
 
 const { t, tm, rt } = useI18n()
 const { analysisEnabled, again, repeatTopic, backToTopics } = usePractice()
-const { isAuthenticated, openAuth } = useAuth()
+const { isAuthenticated, setCredits, openAuth } = useAuth()
 const features = useFeatures()
+
+/** idle — разбор ещё не оплачен, empty — кредиты кончились. */
+type AnalysisState = 'idle' | 'pending' | 'ready' | 'empty' | 'error'
+const state = ref<AnalysisState>('idle')
+
+const wantsAnalysis = computed(() => features.value.analysis && analysisEnabled.value)
+
+/** Разбор стоит кредит: сначала списываем, и только потом показываем цифры. */
+async function payForAnalysis() {
+  if (state.value !== 'idle') return
+  state.value = 'pending'
+  try {
+    setCredits(await spendCredit())
+    state.value = 'ready'
+  } catch (error) {
+    state.value = error instanceof ApiError && error.status === 402 ? 'empty' : 'error'
+  }
+}
+
+function retryAnalysis() {
+  state.value = 'idle'
+  void payForAnalysis()
+}
+
+// Вход мог случиться уже на этом экране — тогда разбор оплачивается сразу после него.
+watch(
+  [wantsAnalysis, isAuthenticated],
+  ([wanted, authed]) => {
+    if (wanted && authed) void payForAnalysis()
+  },
+  { immediate: true },
+)
 
 const fillerWords = computed(() =>
   (tm('analysis.demoWords') as unknown[]).map((word, index) => ({
@@ -21,7 +56,7 @@ const fillerWords = computed(() =>
     <h1>{{ t('finished.title') }}</h1>
     <p class="lead">{{ t('finished.lead') }}</p>
 
-    <div v-if="features.analysis && analysisEnabled" class="analysis-summary">
+    <div v-if="wantsAnalysis && state === 'ready'" class="analysis-summary">
       <div class="analysis-summary-heading">
         <span>{{ t('analysis.kicker') }}</span>
         <strong>{{ t('analysis.title') }}</strong>
@@ -59,12 +94,31 @@ const fillerWords = computed(() =>
           <strong>{{ t('analysis.paceValue') }}</strong>
         </div>
       </div>
-
-      <div v-if="features.auth && !isAuthenticated" class="analysis-auth-callout">
-        <p>{{ t('analysis.authCallout') }}</p>
-        <button type="button" @click="openAuth('login')">{{ t('analysis.authCta') }}</button>
-      </div>
     </div>
+
+    <div v-else-if="wantsAnalysis && !isAuthenticated" class="analysis-auth-callout">
+      <p>{{ t('analysis.authCallout') }}</p>
+      <button type="button" @click="openAuth('login')">{{ t('analysis.authCta') }}</button>
+    </div>
+
+    <div v-else-if="wantsAnalysis && state === 'empty'" class="analysis-auth-callout">
+      <strong>{{ t('credits.empty.title') }}</strong>
+      <p>{{ t('credits.empty.text') }}</p>
+      <a class="credits-buy" :href="SUPPORT.payUrl" rel="noreferrer" target="_blank">
+        {{ t('credits.empty.cta') }}
+      </a>
+    </div>
+
+    <div v-else-if="wantsAnalysis && state === 'error'" class="analysis-auth-callout">
+      <p>{{ t('credits.error') }}</p>
+      <button type="button" @click="retryAnalysis">
+        {{ t('credits.retry') }}
+      </button>
+    </div>
+
+    <p v-else-if="wantsAnalysis && state === 'pending'" class="analysis-pending" role="status">
+      {{ t('credits.checking') }}
+    </p>
 
     <div class="finished-actions">
       <button type="button" class="action-button action-button--primary" @click="again">

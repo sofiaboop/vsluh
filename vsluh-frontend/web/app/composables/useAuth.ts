@@ -32,9 +32,12 @@ export function useAuth() {
   const dialogMode = useState<AuthMode | null>('auth-dialog', () => null)
   const pending = useState('auth-pending', () => false)
   const errorKeyRef = useState<string | null>('auth-error', () => null)
+  // Поздравление с подарочными кредитами показываем ровно один раз — сразу после регистрации.
+  const giftOpen = useState('auth-gift', () => false)
 
   const isAuthenticated = computed(() => user.value !== null)
   const userName = computed(() => user.value?.name ?? '')
+  const credits = computed(() => user.value?.credits ?? 0)
 
   function openAuth(mode: AuthMode) {
     errorKeyRef.value = null
@@ -63,8 +66,10 @@ export function useAuth() {
           : await loginUser({ email: payload.email.trim(), password: payload.password })
 
       setAuthToken(session.token)
+      const registered = dialogMode.value === 'register'
       user.value = session.user
       dialogMode.value = null
+      giftOpen.value = registered && session.user.credits > 0
       return true
     } catch (error) {
       errorKeyRef.value = errorKey(error)
@@ -90,23 +95,37 @@ export function useAuth() {
     }
   }
 
+  /** Остаток после списания кредита: профиль перечитывать ради одного числа не нужно. */
+  function setCredits(value: number) {
+    if (user.value) user.value = { ...user.value, credits: value }
+  }
+
+  function closeGift() {
+    giftOpen.value = false
+  }
+
   function logout() {
     clearAuthToken()
     user.value = null
     dialogMode.value = null
     errorKeyRef.value = null
+    giftOpen.value = false
   }
 
   return {
     user,
     isAuthenticated,
     userName,
+    credits,
+    giftOpen,
     dialogMode,
     pending,
     errorKey: errorKeyRef,
     openAuth,
     closeAuth,
     submitAuth,
+    setCredits,
+    closeGift,
     restoreSession,
     logout,
   }

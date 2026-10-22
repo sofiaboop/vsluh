@@ -56,6 +56,7 @@ jobs:
           NUXT_PUBLIC_API_URL: ${{ env.API_URL }}
           NUXT_PUBLIC_BOT_NAME: ${{ env.BOT_NAME }}
           NUXT_PUBLIC_FEATURE_AUTH: ${{ env.FEATURE_AUTH }}
+          NUXT_PUBLIC_FEATURE_ANALYSIS: ${{ env.FEATURE_ANALYSIS }}
           NUXT_PUBLIC_APP_VERSION: ${{ github.sha }}
         run: |
           npm ci

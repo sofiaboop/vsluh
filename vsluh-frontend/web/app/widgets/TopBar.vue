@@ -3,7 +3,7 @@ import { SUPPORT } from '~/shared/constants/practice'
 
 const { t } = useI18n()
 const { backToTopics } = usePractice()
-const { isAuthenticated, dialogMode, openAuth, logout } = useAuth()
+const { isAuthenticated, dialogMode, giftOpen, credits, openAuth, logout } = useAuth()
 const features = useFeatures()
 const supportOpen = ref(false)
 
@@ -31,9 +31,15 @@ onMounted(() => {
       <LanguagePicker />
 
       <template v-if="features.auth">
-        <button v-if="isAuthenticated" class="auth-nav-button" type="button" @click="logout">
-          {{ t('auth.logout') }}
-        </button>
+        <div v-if="isAuthenticated" class="auth-nav">
+          <span class="credits-badge" :title="t('credits.hint')">
+            <span aria-hidden="true" class="credits-badge-dot" />
+            {{ t('credits.badge', { count: credits }) }}
+          </span>
+          <button class="auth-nav-button" type="button" @click="logout">
+            {{ t('auth.logout') }}
+          </button>
+        </div>
         <div v-else class="auth-nav">
           <button class="auth-nav-button" type="button" @click="openAuth('login')">
             {{ t('auth.login') }}
@@ -60,6 +66,7 @@ onMounted(() => {
   </header>
 
   <AuthDialog v-if="features.auth && dialogMode" />
+  <CreditsGiftDialog v-if="features.auth && giftOpen" />
 
   <Teleport to="body">
     <div v-if="supportOpen" class="support-overlay" @click.self="close">

@@ -6,6 +6,8 @@ export interface AuthUser {
   email: string
   name: string
   createdAt: number
+  /** Остаток разборов речи: один разбор стоит один кредит. */
+  credits: number
 }
 
 export interface AuthSession {
@@ -18,6 +20,7 @@ interface UserPayload {
   email: string
   name: string
   created_at: number
+  credits: number
 }
 
 interface SessionPayload {
@@ -26,7 +29,13 @@ interface SessionPayload {
 }
 
 function toUser(payload: UserPayload): AuthUser {
-  return { id: payload.id, email: payload.email, name: payload.name, createdAt: payload.created_at }
+  return {
+    id: payload.id,
+    email: payload.email,
+    name: payload.name,
+    createdAt: payload.created_at,
+    credits: payload.credits,
+  }
 }
 
 export async function registerUser(input: {
@@ -52,4 +61,10 @@ export async function loginUser(input: { email: string; password: string }): Pro
 export async function fetchMe(): Promise<AuthUser> {
   const payload = await apiFetch<{ user: UserPayload }>('/v1/auth/me')
   return toUser(payload.user)
+}
+
+/** Списывает кредит за разбор и возвращает остаток. 402 — кредиты кончились. */
+export async function spendCredit(): Promise<number> {
+  const payload = await apiFetch<{ credits: number }>('/v1/credits/spend', { method: 'POST' })
+  return payload.credits
 }

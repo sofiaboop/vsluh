@@ -5,6 +5,10 @@ import { FEATURES } from '~/shared/constants/features'
  * раньше, чем включается на проде (`NUXT_PUBLIC_FEATURE_AUTH`).
  */
 export function useFeatures() {
-  const { featureAuth } = useRuntimeConfig().public
-  return computed(() => ({ ...FEATURES, auth: FEATURES.auth || featureAuth }))
+  const { featureAuth, featureAnalysis } = useRuntimeConfig().public
+  return computed(() => ({
+    ...FEATURES,
+    auth: FEATURES.auth || featureAuth,
+    analysis: FEATURES.analysis || featureAnalysis,
+  }))
 }

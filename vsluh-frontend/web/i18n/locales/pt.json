@@ -71,6 +71,23 @@
       "network": "Não foi possível conectar ao servidor. Tente novamente"
     }
   },
+  "credits": {
+    "badge": "Créditos: {count}",
+    "hint": "Uma análise de fala custa um crédito",
+    "gift": {
+      "title": "Ganhe {count} créditos",
+      "text": "São {count} análises da sua fala. Ative «Análise da resposta» antes de praticar e use já.",
+      "cta": "Ótimo"
+    },
+    "empty": {
+      "title": "Seus créditos acabaram",
+      "text": "A análise de fala custa um crédito. Recarregue o saldo para analisar a próxima resposta.",
+      "cta": "Recarregar saldo"
+    },
+    "checking": "Preparando a análise…",
+    "error": "Não foi possível debitar o crédito. Tente de novo",
+    "retry": "Tentar de novo"
+  },
   "analysis": {
     "toggle": "Análise da resposta",
     "help": "O que significa análise da resposta",

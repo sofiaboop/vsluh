@@ -71,6 +71,23 @@
       "network": "Impossible de joindre le serveur. Réessaie"
     }
   },
+  "credits": {
+    "badge": "Crédits : {count}",
+    "hint": "Une analyse de la parole coûte un crédit",
+    "gift": {
+      "title": "{count} crédits offerts",
+      "text": "Cela fait {count} analyses de ta parole. Active « Analyse de la réponse » avant la pratique pour les utiliser tout de suite.",
+      "cta": "Super"
+    },
+    "empty": {
+      "title": "Tu n’as plus de crédits",
+      "text": "Une analyse coûte un crédit. Recharge ton solde pour analyser la réponse suivante.",
+      "cta": "Recharger le solde"
+    },
+    "checking": "Préparation de l’analyse…",
+    "error": "Impossible de débiter le crédit. Réessaie",
+    "retry": "Réessayer"
+  },
   "analysis": {
     "toggle": "Analyse de la réponse",
     "help": "Ce que signifie l'analyse de la réponse",

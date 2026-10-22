@@ -71,6 +71,23 @@
       "network": "No se pudo conectar con el servidor. Inténtalo de nuevo"
     }
   },
+  "credits": {
+    "badge": "Créditos: {count}",
+    "hint": "Un análisis de voz cuesta un crédito",
+    "gift": {
+      "title": "Te regalamos {count} créditos",
+      "text": "Son {count} análisis de tu discurso. Activa «Análisis de la respuesta» antes de practicar y úsalos enseguida.",
+      "cta": "Genial"
+    },
+    "empty": {
+      "title": "Te quedaste sin créditos",
+      "text": "Un análisis de voz cuesta un crédito. Recarga tu saldo para analizar la siguiente respuesta.",
+      "cta": "Recargar saldo"
+    },
+    "checking": "Preparando el análisis…",
+    "error": "No se pudo descontar el crédito. Inténtalo de nuevo",
+    "retry": "Intentar de nuevo"
+  },
   "analysis": {
     "toggle": "Análisis de la respuesta",
     "help": "Qué significa el análisis de la respuesta",

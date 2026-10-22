@@ -71,6 +71,23 @@
       "network": "Nie udało się połączyć z serwerem. Spróbuj ponownie"
     }
   },
+  "credits": {
+    "badge": "Kredyty: {count}",
+    "hint": "Jedna analiza mowy kosztuje jeden kredyt",
+    "gift": {
+      "title": "{count} kredyty w prezencie",
+      "text": "To {count} analizy twojej wypowiedzi. Włącz «Analizę odpowiedzi» przed praktyką i wykorzystaj je od razu.",
+      "cta": "Świetnie"
+    },
+    "empty": {
+      "title": "Kredyty się skończyły",
+      "text": "Analiza mowy kosztuje jeden kredyt. Doładuj saldo, aby przeanalizować kolejną odpowiedź.",
+      "cta": "Doładuj saldo"
+    },
+    "checking": "Przygotowujemy analizę…",
+    "error": "Nie udało się pobrać kredytu. Spróbuj jeszcze raz",
+    "retry": "Spróbuj jeszcze raz"
+  },
   "analysis": {
     "toggle": "Analiza odpowiedzi",
     "help": "Co znaczy analiza odpowiedzi",
