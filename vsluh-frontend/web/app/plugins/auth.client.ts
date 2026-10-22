@@ -1,8 +1,11 @@
 export default defineNuxtPlugin({
   name: 'auth',
-  // не блокируем гидрацию: профиль подтягивается фоном, интерфейс уже отрисован
-  parallel: true,
-  async setup() {
-    await useAuth().restoreSession()
+  setup() {
+    const { restoreSession } = useAuth()
+    // Строго после гидрации: сайт статический, в разметке пользователь всегда
+    // не авторизован, и подстановка профиля раньше времени ломает совпадение.
+    onNuxtReady(() => {
+      void restoreSession()
+    })
   },
 })
