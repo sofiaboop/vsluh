@@ -32,6 +32,7 @@ onMounted(() => {
 
       <template v-if="features.auth">
         <div v-if="isAuthenticated" class="auth-nav">
+          <NuxtLink class="auth-nav-button" to="/history">{{ t('nav.history') }}</NuxtLink>
           <span class="credits-badge" :title="t('credits.hint')">
             <span aria-hidden="true" class="credits-badge-dot" />
             {{ t('credits.badge', { count: credits }) }}

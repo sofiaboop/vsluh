@@ -1,6 +1,7 @@
 {
   "nav": {
     "brand": "VSLUH",
+    "history": "History",
     "home": "Home",
     "support": "Support us"
   },
@@ -102,6 +103,51 @@
     "checking": "Preparing the analysis…",
     "error": "Could not spend a credit. Please try again",
     "retry": "Try again"
+  },
+  "report": {
+    "pending": "Analysing the recording…",
+    "words": "Words spoken",
+    "wpmValue": "{value} wpm",
+    "noFillers": "None",
+    "silentTitle": "No speech recognised",
+    "silentText": "There were no words in the recording. Check the microphone and try again — the credit was not spent.",
+    "micTitle": "No microphone access",
+    "micText": "Allow recording in your browser settings, otherwise the speech cannot be analysed.",
+    "download": "Download the recording",
+    "historyLink": "All your analyses",
+    "tips": {
+      "fillers_none": "No filler words — the answer sounds collected.",
+      "fillers_few": "A couple of fillers slipped in. Catch them next time: instead of \"um\" just stay silent.",
+      "fillers_many": "Too many fillers. Replace them with a pause — a pause sounds far more confident.",
+      "pace_good": "The pace is conversational and easy to follow.",
+      "pace_fast": "You speak fast. Slow down and finish each thought with a full stop.",
+      "pace_slow": "The pace is slow. Keep the thought tighter and do not stretch the words.",
+      "pauses_many": "There were several long pauses. When you lose the thread, continue with a concrete example.",
+      "repeats_many": "Words repeat. Finish the phrase instead of starting it over.",
+      "short_answer": "The answer is short. Add one example from your life — it carries the story.",
+      "keep_going": "Good take. Repeat it tomorrow to make it stick."
+    }
+  },
+  "history": {
+    "title": "Analysis history",
+    "lead": "All your checks with recordings and measurements",
+    "authCallout": "Log in to see your history and statistics.",
+    "empty": "No analyses yet. Run a practice with analysis enabled and the first one will appear here.",
+    "failed": "Could not load the history. Try reloading the page.",
+    "loading": "Loading…",
+    "more": "Show more",
+    "back": "Back to practice",
+    "noTopic": "No topic",
+    "fillersShort": "fillers: {count}",
+    "stats": {
+      "checks": "Analyses",
+      "minutes": "Minutes spoken",
+      "pace": "Average pace",
+      "streak": "Day streak",
+      "dynamics": "Daily dynamics",
+      "fillers": "Most frequent fillers",
+      "barHint": "{date}: {checks} checks"
+    }
   },
   "analysis": {
     "toggle": "Answer analysis",

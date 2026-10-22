@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "home": "Strona główna", "support": "Wesprzyj" },
+  "nav": { "brand": "VSLUH", "history": "Historia",
+    "home": "Strona główna", "support": "Wesprzyj" },
   "footer": "Praktyka mówienia",
   "language": { "label": "Język", "switch": "Zmień język" },
   "modes": {
@@ -95,6 +96,51 @@
     "checking": "Przygotowujemy analizę…",
     "error": "Nie udało się pobrać kredytu. Spróbuj jeszcze raz",
     "retry": "Spróbuj jeszcze raz"
+  },
+  "report": {
+    "pending": "Analizujemy nagranie…",
+    "words": "Wypowiedziane słowa",
+    "wpmValue": "{value} wpm",
+    "noFillers": "None",
+    "silentTitle": "No speech recognised",
+    "silentText": "There were no words in the recording. Check the microphone and try again — the credit was not spent.",
+    "micTitle": "No microphone access",
+    "micText": "Allow recording in your browser settings, otherwise the speech cannot be analysed.",
+    "download": "Pobierz nagranie",
+    "historyLink": "All your analyses",
+    "tips": {
+      "fillers_none": "No filler words — the answer sounds collected.",
+      "fillers_few": "A couple of fillers slipped in. Catch them next time: instead of \"um\" just stay silent.",
+      "fillers_many": "Too many fillers. Replace them with a pause — a pause sounds far more confident.",
+      "pace_good": "The pace is conversational and easy to follow.",
+      "pace_fast": "You speak fast. Slow down and finish each thought with a full stop.",
+      "pace_slow": "The pace is slow. Keep the thought tighter and do not stretch the words.",
+      "pauses_many": "There were several long pauses. When you lose the thread, continue with a concrete example.",
+      "repeats_many": "Words repeat. Finish the phrase instead of starting it over.",
+      "short_answer": "The answer is short. Add one example from your life — it carries the story.",
+      "keep_going": "Good take. Repeat it tomorrow to make it stick."
+    }
+  },
+  "history": {
+    "title": "Historia analiz",
+    "lead": "Wszystkie sprawdzenia z nagraniami i pomiarami",
+    "authCallout": "Zaloguj się, aby zobaczyć historię i statystyki.",
+    "empty": "No analyses yet. Run a practice with analysis enabled and the first one will appear here.",
+    "failed": "Could not load the history. Try reloading the page.",
+    "loading": "Ładowanie…",
+    "more": "Pokaż więcej",
+    "back": "Wróć do praktyki",
+    "noTopic": "No topic",
+    "fillersShort": "fillers: {count}",
+    "stats": {
+      "checks": "Analyses",
+      "minutes": "Minutes spoken",
+      "pace": "Average pace",
+      "streak": "Day streak",
+      "dynamics": "Daily dynamics",
+      "fillers": "Most frequent fillers",
+      "barHint": "{date}: {checks} checks"
+    }
   },
   "analysis": {
     "toggle": "Analiza odpowiedzi",

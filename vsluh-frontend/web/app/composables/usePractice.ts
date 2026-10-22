@@ -20,6 +20,9 @@ let tick: ReturnType<typeof setInterval> | undefined
 
 export function usePractice() {
   const { locale } = useI18n()
+  const recorder = useRecorder()
+  const features = useFeatures()
+  const { isAuthenticated } = useAuth()
 
   const stage = useState<Stage>('practice-stage', () => 'topics')
   const mode = useState<SpeakingMode>('practice-mode', () => 'spontaneous')
@@ -27,6 +30,10 @@ export function usePractice() {
   const moodEnabled = useState('practice-mood-on', () => false)
   const moodIndex = useState<number | null>('practice-mood', () => null)
   const analysisEnabled = useState('practice-analysis-on', () => false)
+  /** Разбор ждут, только когда он включён, доступен в контуре и есть кому его показать. */
+  const analysisWanted = computed(
+    () => analysisEnabled.value && features.value.analysis && isAuthenticated.value,
+  )
 
   const rows = useState<WheelRow[]>('practice-rows', () => [])
   const spinning = useState('practice-spinning', () => false)
@@ -135,18 +142,23 @@ export function usePractice() {
   function startPrepare() {
     stage.value = 'prepare'
     remaining.value = modeOption.value.prepareSec
+    // Разрешение на микрофон спрашиваем на подготовке: диалог браузера
+    // не должен съедать время ответа.
+    if (analysisWanted.value) void recorder.prepare()
     runTimer(startSpeak)
   }
 
   function startSpeak() {
     stage.value = 'speak'
     remaining.value = modeOption.value.speakSec
+    if (analysisWanted.value) recorder.start()
     runTimer(finish)
   }
 
   function finish() {
     stopTimer()
     stage.value = 'finished'
+    void recorder.stop()
   }
 
   function togglePause() {
@@ -155,6 +167,7 @@ export function usePractice() {
 
   function backToTopics() {
     stopTimer()
+    recorder.release()
     clearTimeout(startDelay)
     clearTimeout(spinFallback)
     spinning.value = false
@@ -165,11 +178,13 @@ export function usePractice() {
   /** Новый вопрос по тем же темам. */
   function again() {
     stopTimer()
+    void recorder.take()
     startWheel()
   }
 
   /** Тот же вопрос ещё раз. */
   function repeatTopic() {
+    void recorder.take()
     startPrepare()
   }
 
@@ -182,10 +197,12 @@ export function usePractice() {
   return {
     stage,
     mode,
+    modeOption,
     selected,
     moodEnabled,
     moodIndex,
     analysisEnabled,
+    analysisWanted,
     rows,
     spinning,
     settled,
