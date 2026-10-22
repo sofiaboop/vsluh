@@ -135,6 +135,8 @@
 .topbar-actions {
   align-items: center;
   gap: 10px;
+  /* Высота кнопки «Поддержать» из макета: строка не должна схлопываться, пока кнопка скрыта фичефлагом */
+  min-height: 41.5px;
   display: flex;
 }
 
