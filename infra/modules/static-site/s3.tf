@@ -51,6 +51,37 @@ data "aws_iam_policy_document" "site" {
       values   = [aws_cloudfront_distribution.site.arn]
     }
   }
+
+  # Права CI выданы политикой бакета, а не политикой пользователя: ключ из
+  # GitHub Actions получает доступ ровно к этому бакету и ни к чему больше.
+  statement {
+    sid = "AllowCiDeploy"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+    resources = [aws_s3_bucket.site.arn]
+
+    principals {
+      type        = "AWS"
+      identifiers = [var.ci_user_arn]
+    }
+  }
+
+  statement {
+    sid = "AllowCiWriteObjects"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+    ]
+    resources = ["${aws_s3_bucket.site.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [var.ci_user_arn]
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "site" {
