@@ -1,12 +1,12 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Права CI на выкат фронта.
+# Права CI на сброс кеша CloudFront.
 #
-# `vsluh-ci` катит бэкенд через SAM и статику через `aws s3 sync`. Политика
-# бэкенда заведена отдельно; здесь — ровно то, что нужно фронту: запись в два
-# бакета и инвалидация их дистрибуций.
+# Доступ к бакетам статики выдан политиками самих бакетов (модуль static-site) —
+# так радиус поражения ключа из GitHub Actions ограничен ровно ими. У CloudFront
+# ресурсных политик нет, поэтому инвалидация требует политики пользователя.
 #
-# Привязка к конкретным бакетам, а не `*`: ключ лежит в GitHub Actions, и его
-# радиус поражения должен быть минимальным.
+# Применяется воркфлоу `infra-ci-permissions.yml`, а не локально: у `vsluh-deploy`
+# нет ни одного действия IAM.
 # ─────────────────────────────────────────────────────────────────────────────
 
 terraform {
@@ -38,30 +38,8 @@ variable "ci_user" {
   default     = "vsluh-ci"
 }
 
-variable "buckets" {
-  description = "Бакеты статики по контурам"
-  type        = list(string)
-  default     = ["vsluh.club", "dev.vsluh.club"]
-}
-
 data "aws_iam_policy_document" "frontend_deploy" {
-  statement {
-    sid       = "ListSiteBuckets"
-    actions   = ["s3:ListBucket"]
-    resources = [for b in var.buckets : "arn:aws:s3:::${b}"]
-  }
-
-  statement {
-    sid = "WriteSiteObjects"
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:DeleteObject",
-    ]
-    resources = [for b in var.buckets : "arn:aws:s3:::${b}/*"]
-  }
-
-  # Дистрибуцию CI ищет по алиасу домена, поэтому нужен список.
+  # Дистрибуцию CI ищет по алиасу домена, поэтому нужен и список.
   statement {
     sid = "InvalidateDistributions"
     actions = [
@@ -75,7 +53,7 @@ data "aws_iam_policy_document" "frontend_deploy" {
 
 resource "aws_iam_policy" "frontend_deploy" {
   name        = "vsluh-ci-frontend-deploy"
-  description = "Выкат статики лендинга в S3 и сброс кеша CloudFront"
+  description = "Сброс кеша CloudFront при выкате статики"
   policy      = data.aws_iam_policy_document.frontend_deploy.json
 }
 
