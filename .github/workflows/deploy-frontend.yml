@@ -96,6 +96,15 @@ jobs:
           aws s3 cp robots.txt "s3://$BUCKET/robots.txt" \
             --cache-control "$CC_SHORT" --content-type "text/plain; charset=utf-8"
 
+          # CloudFront подставляет index.html только в корне, поэтому путь без
+          # слэша (/history) упал бы в SPA-заглушку и показал главную. Кладём
+          # страницу ещё и ключом каталога.
+          for page in */index.html; do
+            dir="${page%/index.html}"
+            aws s3 cp "$page" "s3://$BUCKET/$dir" \
+              --cache-control "$CC_REVALIDATE" --content-type "text/html; charset=utf-8"
+          done
+
       - name: Сбросить кеш CloudFront и проверить выкат
         env:
           DOMAIN: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
