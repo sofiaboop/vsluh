@@ -1,5 +1,5 @@
 {
-  "nav": { "home": "Startseite", "support": "Unterstützen" },
+  "nav": { "brand": "vsluh", "home": "Startseite", "support": "Unterstützen" },
   "footer": "Sprechpraxis",
   "language": { "label": "Sprache", "switch": "Sprache wechseln" },
   "modes": {

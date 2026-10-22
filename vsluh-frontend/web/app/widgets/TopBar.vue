@@ -24,7 +24,7 @@ onMounted(() => {
   <header class="topbar">
     <button :aria-label="t('nav.home')" class="brand" type="button" @click="backToTopics">
       <span class="brand-mark"><span /></span>
-      <span>ВСЛУХ</span>
+      <span>{{ t('nav.brand') }}</span>
     </button>
 
     <div class="topbar-actions">
