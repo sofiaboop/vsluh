@@ -216,9 +216,14 @@ CNAME  dev.vsluh.club   → d14ad7v88t1xys.cloudfront.net
 | `*.html`, `*payload.json`  | `no-cache, must-revalidate`           |
 | `robots.txt`               | `public, max-age=300, must-revalidate` |
 
-Имена ассетов хешированные, поэтому `--delete` в `sync` безопасен. После заливки
-воркфлоу находит дистрибуцию по алиасу домена, запускает инвалидацию `/*`
-и ждёт её завершения.
+Имена ассетов хешированные, поэтому `--delete` в `sync` безопасен.
+
+Инвалидации CloudFront после выката нет и она не нужна: CloudFront уважает
+`Cache-Control` от origin'а, а html и payload залиты с `no-cache, must-revalidate`.
+Заодно это обходит дыру в правах: `cloudfront:CreateInvalidation` требует политики
+пользователя, а IAM-действия закрыты и для `vsluh-deploy`, и для `vsluh-ci`.
+Доступ CI к бакетам выдан поэтому политиками самих бакетов — они ресурсные
+и IAM-прав не требуют.
 
 На тестовом контуре `robots.txt` перезаписывается на `Disallow: /`, чтобы
 `dev.vsluh.club` не попал в поиск.

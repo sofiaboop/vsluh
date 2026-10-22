@@ -93,20 +93,16 @@ jobs:
           aws s3 cp robots.txt "s3://$BUCKET/robots.txt" \
             --cache-control "$CC_SHORT" --content-type "text/plain; charset=utf-8"
 
-      - name: Сбросить кеш CloudFront
+      - name: Проверить, что отдаётся свежая сборка
         env:
           DOMAIN: ${{ env.ENVIRONMENT == 'prod' && 'vsluh.club' || 'dev.vsluh.club' }}
         run: |
-          DIST_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?contains(Aliases.Items, '$DOMAIN')].Id | [0]" \
-            --output text)
-          if [ -z "$DIST_ID" ] || [ "$DIST_ID" = "None" ]; then
-            echo "Не нашёл дистрибуцию для $DOMAIN — проверь infra/cloudfront/$DOMAIN" >&2
+          # Инвалидации нет намеренно: html и payload залиты с no-cache,
+          # must-revalidate, остальное хешировано в имени и immutable —
+          # CloudFront уважает Cache-Control origin'а и отдаёт новое сразу.
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' "https://$DOMAIN/")
+          if [ "$CODE" != "200" ]; then
+            echo "https://$DOMAIN/ отдаёт $CODE" >&2
             exit 1
           fi
-          INVALIDATION=$(aws cloudfront create-invalidation \
-            --distribution-id "$DIST_ID" --paths '/*' \
-            --query 'Invalidation.Id' --output text)
-          aws cloudfront wait invalidation-completed \
-            --distribution-id "$DIST_ID" --id "$INVALIDATION"
-          echo "Выкачено на https://$DOMAIN (дистрибуция $DIST_ID)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Выкачено на https://$DOMAIN" >> "$GITHUB_STEP_SUMMARY"

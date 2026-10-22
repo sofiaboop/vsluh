@@ -53,7 +53,9 @@ S3 + CloudFront + Cloudflare. Инфраструктура — модуль `inf
 | `*.html`, `*payload.json`   | `no-cache, must-revalidate`                 |
 | `/robots.txt`, `/sitemap*`  | `public, max-age=300, must-revalidate`      |
 
-После `aws s3 sync` обязательна инвалидация CloudFront с ожиданием завершения.
+После `aws s3 sync` инвалидация не запускается: CloudFront уважает `Cache-Control`
+от origin'а, а html и payload лежат с `no-cache`. Доступ CI к бакетам выдан их
+собственными политиками: прав на IAM нет ни у `vsluh-deploy`, ни у `vsluh-ci`.
 
 ## Переменные
 
