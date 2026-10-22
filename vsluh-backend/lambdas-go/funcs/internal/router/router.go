@@ -10,10 +10,9 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-// JSONHeaders — общие заголовки ответа. CORS настроен на уровне API Gateway,
-// здесь дублируем только то, что нужно самому ответу.
+// JSONHeaders — общие заголовки ответа, включая CORS (см. handler.Headers).
 func JSONHeaders() map[string]string {
-	return map[string]string{"Content-Type": "application/json; charset=utf-8"}
+	return handler.Headers()
 }
 
 // Route разбирает метод и путь запроса и вызывает соответствующий хендлер.
@@ -25,7 +24,7 @@ func Route(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGa
 
 	switch {
 	case req.HTTPMethod == http.MethodOptions:
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusNoContent}, nil
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusNoContent, Headers: JSONHeaders()}, nil
 
 	case req.HTTPMethod == http.MethodGet && path == "/health":
 		return handler.Health(ctx)

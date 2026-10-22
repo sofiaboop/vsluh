@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -67,5 +68,16 @@ func TestAuthDisabledWithoutSecret(t *testing.T) {
 		if resp.StatusCode != http.StatusServiceUnavailable {
 			t.Errorf("status = %d, want 503", resp.StatusCode)
 		}
+	}
+}
+
+// Браузер отбросит ответ без CORS-заголовков, даже если он успешный.
+func TestHeadersAllowCrossOrigin(t *testing.T) {
+	h := Headers()
+	if h["Access-Control-Allow-Origin"] != "*" {
+		t.Errorf("Access-Control-Allow-Origin = %q", h["Access-Control-Allow-Origin"])
+	}
+	if !strings.Contains(h["Access-Control-Allow-Headers"], "Authorization") {
+		t.Errorf("Authorization должен быть в Access-Control-Allow-Headers: %q", h["Access-Control-Allow-Headers"])
 	}
 }

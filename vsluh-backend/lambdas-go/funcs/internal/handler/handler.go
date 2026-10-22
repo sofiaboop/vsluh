@@ -8,8 +8,16 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func jsonHeaders() map[string]string {
-	return map[string]string{"Content-Type": "application/json; charset=utf-8"}
+// Headers — заголовки любого ответа API. CORS прописан здесь, а не только
+// в manifest.yaml: настройка Cors в SAM вешает заголовки лишь на preflight,
+// а ответы AWS_PROXY-интеграции формирует сама лямбда.
+func Headers() map[string]string {
+	return map[string]string{
+		"Content-Type":                 "application/json; charset=utf-8",
+		"Access-Control-Allow-Origin":  "*",
+		"Access-Control-Allow-Headers": "Content-Type,Authorization,X-Telegram-Init-Data",
+		"Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+	}
 }
 
 func respondJSON(status int, payload any) (events.APIGatewayProxyResponse, error) {
@@ -19,7 +27,7 @@ func respondJSON(status int, payload any) (events.APIGatewayProxyResponse, error
 	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: status,
-		Headers:    jsonHeaders(),
+		Headers:    Headers(),
 		Body:       string(body),
 	}, nil
 }
@@ -28,7 +36,7 @@ func respondError(status int, message string) (events.APIGatewayProxyResponse, e
 	body, _ := json.Marshal(map[string]string{"error": message})
 	return events.APIGatewayProxyResponse{
 		StatusCode: status,
-		Headers:    jsonHeaders(),
+		Headers:    Headers(),
 		Body:       string(body),
 	}, nil
 }
