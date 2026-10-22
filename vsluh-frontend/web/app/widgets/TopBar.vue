@@ -3,7 +3,7 @@ import { SUPPORT } from '~/shared/constants/practice'
 
 const { t } = useI18n()
 const { backToTopics } = usePractice()
-const { isAuthenticated, dialogMode, giftOpen, credits, openAuth, logout } = useAuth()
+const { isAuthenticated, dialogMode, giftCredits, credits, openAuth, logout } = useAuth()
 const features = useFeatures()
 const supportOpen = ref(false)
 
@@ -66,7 +66,7 @@ onMounted(() => {
   </header>
 
   <AuthDialog v-if="features.auth && dialogMode" />
-  <CreditsGiftDialog v-if="features.auth && giftOpen" />
+  <CreditsGiftDialog v-if="features.auth && giftCredits !== null" />
 
   <Teleport to="body">
     <div v-if="supportOpen" class="support-overlay" @click.self="close">

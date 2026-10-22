@@ -32,8 +32,9 @@ export function useAuth() {
   const dialogMode = useState<AuthMode | null>('auth-dialog', () => null)
   const pending = useState('auth-pending', () => false)
   const errorKeyRef = useState<string | null>('auth-error', () => null)
-  // Поздравление с подарочными кредитами показываем ровно один раз — сразу после регистрации.
-  const giftOpen = useState('auth-gift', () => false)
+  // Сколько кредитов подарили при регистрации. Число запоминаем отдельно от баланса:
+  // поздравление должно говорить про подарок, а не про текущий остаток.
+  const giftCredits = useState<number | null>('auth-gift', () => null)
 
   const isAuthenticated = computed(() => user.value !== null)
   const userName = computed(() => user.value?.name ?? '')
@@ -69,7 +70,7 @@ export function useAuth() {
       const registered = dialogMode.value === 'register'
       user.value = session.user
       dialogMode.value = null
-      giftOpen.value = registered && session.user.credits > 0
+      giftCredits.value = registered && session.user.credits > 0 ? session.user.credits : null
       return true
     } catch (error) {
       errorKeyRef.value = errorKey(error)
@@ -101,7 +102,7 @@ export function useAuth() {
   }
 
   function closeGift() {
-    giftOpen.value = false
+    giftCredits.value = null
   }
 
   function logout() {
@@ -109,7 +110,7 @@ export function useAuth() {
     user.value = null
     dialogMode.value = null
     errorKeyRef.value = null
-    giftOpen.value = false
+    giftCredits.value = null
   }
 
   return {
@@ -117,7 +118,7 @@ export function useAuth() {
     isAuthenticated,
     userName,
     credits,
-    giftOpen,
+    giftCredits,
     dialogMode,
     pending,
     errorKey: errorKeyRef,
