@@ -14,6 +14,7 @@ backend:
   USER_BACKEND_DEV_THROTTLING_RATE_LIMIT: '20'
   USER_BACKEND_DEV_THROTTLING_BURST_LIMIT: '40'
   USER_BACKEND_DEV_TELEGRAM_BOT_TOKEN: '' # секрет, заполняется из GH Secrets
+  USER_BACKEND_DEV_AUTH_JWT_SECRET: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_DEV_DASHSCOPE_API_KEY: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_DEV_DASHSCOPE_BASE_URL: https://dashscope-intl.aliyuncs.com
   USER_BACKEND_DEV_DASHSCOPE_ASR_MODEL: qwen-audio-3.0-asr-flash
@@ -23,6 +24,7 @@ backend:
   USER_BACKEND_PROD_THROTTLING_RATE_LIMIT: '50'
   USER_BACKEND_PROD_THROTTLING_BURST_LIMIT: '100'
   USER_BACKEND_PROD_TELEGRAM_BOT_TOKEN: '' # секрет, заполняется из GH Secrets
+  USER_BACKEND_PROD_AUTH_JWT_SECRET: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_PROD_DASHSCOPE_API_KEY: '' # секрет, заполняется из GH Secrets
   USER_BACKEND_PROD_DASHSCOPE_BASE_URL: https://dashscope-intl.aliyuncs.com
   USER_BACKEND_PROD_DASHSCOPE_ASR_MODEL: qwen-audio-3.0-asr-flash
@@ -31,7 +33,9 @@ frontend:
   USER_FRONTEND_DEV_SITE_URL: https://dev.vsluh.club
   USER_FRONTEND_DEV_API_URL: https://api-dev.vsluh.club
   USER_FRONTEND_DEV_BOT_NAME: vsluh_dev_bot
+  USER_FRONTEND_DEV_FEATURE_AUTH: 'true'
 
   USER_FRONTEND_PROD_SITE_URL: https://vsluh.club
   USER_FRONTEND_PROD_API_URL: https://api.vsluh.club
   USER_FRONTEND_PROD_BOT_NAME: vsluh_bot
+  USER_FRONTEND_PROD_FEATURE_AUTH: 'false'

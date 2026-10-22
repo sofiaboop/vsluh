@@ -1,15 +1,18 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const { dialogMode, openAuth, closeAuth, submitAuth } = useAuth()
+const { dialogMode, pending, errorKey, openAuth, closeAuth, submitAuth } = useAuth()
 
 const isLogin = computed(() => dialogMode.value === 'login')
 
-function onSubmit(event: Event) {
-  const data = new FormData(event.target as HTMLFormElement)
-  submitAuth({
+async function onSubmit(event: Event) {
+  const form = event.target as HTMLFormElement
+  const data = new FormData(form)
+  const ok = await submitAuth({
     name: String(data.get('name') ?? ''),
     email: String(data.get('email') ?? ''),
+    password: String(data.get('password') ?? ''),
   })
+  if (ok) form.reset()
 }
 
 useEventListener(window, 'keydown', (e: KeyboardEvent) => {
@@ -87,8 +90,16 @@ useEventListener(window, 'keydown', (e: KeyboardEvent) => {
             >
           </label>
 
-          <button type="submit" class="auth-submit">
-            {{ isLogin ? t('auth.submitLogin') : t('auth.submitRegister') }}
+          <p v-if="errorKey" class="auth-error" role="alert">{{ t(errorKey) }}</p>
+
+          <button type="submit" class="auth-submit" :disabled="pending">
+            {{
+              pending
+                ? t('auth.submitting')
+                : isLogin
+                  ? t('auth.submitLogin')
+                  : t('auth.submitRegister')
+            }}
           </button>
         </form>
 

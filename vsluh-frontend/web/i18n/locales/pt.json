@@ -60,8 +60,16 @@
     "passwordPlaceholder": "No mínimo 6 caracteres",
     "submitLogin": "Entrar",
     "submitRegister": "Criar conta",
+    "submitting": "Enviando…",
     "skip": "Continuar sem entrar",
-    "close": "Fechar"
+    "close": "Fechar",
+    "errors": {
+      "invalidCredentials": "E-mail ou senha incorretos",
+      "emailTaken": "Este e-mail já está cadastrado",
+      "invalidInput": "Verifique os campos: um e-mail real e uma senha com pelo menos 6 caracteres",
+      "unavailable": "O acesso está temporariamente indisponível, tente mais tarde",
+      "network": "Não foi possível conectar ao servidor. Tente novamente"
+    }
   },
   "analysis": {
     "toggle": "Análise da resposta",

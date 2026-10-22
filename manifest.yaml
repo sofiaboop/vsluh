@@ -16,6 +16,11 @@ Parameters:
     Type: String
     NoEcho: true
     Default: ''
+  AuthJwtSecret:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: Секрет подписи токенов сессии (HS256). Пустое значение отключает вход.
   DeletionProtectionEnabled:
     Type: String
     AllowedValues: ['true', 'false']
@@ -85,6 +90,24 @@ Resources:
         - Key: Environment
           Value: !Ref Environment
 
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-${Environment}-users'
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: !Ref DeletionProtectionEnabled
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      Tags:
+        - Key: Product
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
   QuestionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -135,12 +158,16 @@ Resources:
         Variables:
           DYNAMODB_SESSIONS_TABLE_NAME: !Ref SessionsTable
           DYNAMODB_QUESTIONS_TABLE_NAME: !Ref QuestionsTable
+          DYNAMODB_USERS_TABLE_NAME: !Ref UsersTable
           TELEGRAM_BOT_TOKEN: !Ref TelegramBotToken
+          AUTH_JWT_SECRET: !Ref AuthJwtSecret
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionsTable
         - DynamoDBCrudPolicy:
             TableName: !Ref QuestionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
       Events:
         Proxy:
           Type: Api
@@ -157,3 +184,5 @@ Outputs:
     Value: !Ref SessionsTable
   QuestionsTableName:
     Value: !Ref QuestionsTable
+  UsersTableName:
+    Value: !Ref UsersTable

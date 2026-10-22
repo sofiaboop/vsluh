@@ -60,8 +60,16 @@
     "passwordPlaceholder": "Mindestens 6 Zeichen",
     "submitLogin": "Anmelden",
     "submitRegister": "Konto erstellen",
+    "submitting": "Senden…",
     "skip": "Ohne Anmeldung fortfahren",
-    "close": "Schließen"
+    "close": "Schließen",
+    "errors": {
+      "invalidCredentials": "Falsche E-Mail oder falsches Passwort",
+      "emailTaken": "Diese E-Mail ist bereits registriert",
+      "invalidInput": "Prüfe die Felder: echte E-Mail und Passwort mit mindestens 6 Zeichen",
+      "unavailable": "Die Anmeldung ist vorübergehend nicht verfügbar, versuche es später",
+      "network": "Der Server ist nicht erreichbar. Versuche es erneut"
+    }
   },
   "analysis": {
     "toggle": "Antwortanalyse",

@@ -1,4 +1,5 @@
 import { encodeInitData, getInitData } from '~/shared/lib/telegramAuth'
+import { getAuthToken } from '~/shared/lib/authToken'
 
 export class ApiError extends Error {
   constructor(
@@ -10,7 +11,10 @@ export class ApiError extends Error {
   }
 }
 
-/** Запрос к API ВСЛУХ. initData уходит Base64-кодированным в X-Telegram-Init-Data. */
+/**
+ * Запрос к API ВСЛУХ. initData уходит Base64-кодированным в X-Telegram-Init-Data,
+ * токен сессии — в Authorization.
+ */
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const { apiUrl } = useRuntimeConfig().public
 
@@ -20,6 +24,11 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   const initData = getInitData()
   if (initData) {
     headers.set('X-Telegram-Init-Data', encodeInitData(initData))
+  }
+
+  const token = getAuthToken()
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
   }
 
   const response = await fetch(`${apiUrl}${path}`, { ...options, headers })

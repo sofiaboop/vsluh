@@ -67,8 +67,16 @@
     "passwordPlaceholder": "At least 6 characters",
     "submitLogin": "Log in",
     "submitRegister": "Create account",
+    "submitting": "Submitting…",
     "skip": "Continue without logging in",
-    "close": "Close"
+    "close": "Close",
+    "errors": {
+      "invalidCredentials": "Wrong email or password",
+      "emailTaken": "This email is already registered",
+      "invalidInput": "Check the fields: a real email and a password of at least 6 characters",
+      "unavailable": "Sign-in is temporarily unavailable, try again later",
+      "network": "Could not reach the server. Please try again"
+    }
   },
   "analysis": {
     "toggle": "Answer analysis",

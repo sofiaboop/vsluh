@@ -524,6 +524,13 @@
   box-shadow: 0 0 0 4px #5ea9ff1a;
 }
 
+.auth-error {
+  color: #c2495a;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .auth-submit {
   color: #347fc8;
   cursor: pointer;
@@ -545,6 +552,12 @@
   background: #a7d6ff75;
   transform: translateY(-1px);
   box-shadow: 0 15px 32px #28446524;
+}
+
+.auth-submit:disabled {
+  cursor: progress;
+  opacity: 0.6;
+  transform: none;
 }
 
 .auth-skip {

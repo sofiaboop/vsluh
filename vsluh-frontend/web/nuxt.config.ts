@@ -63,6 +63,8 @@ export default defineNuxtConfig({
       siteUrl,
       apiUrl: process.env.NUXT_PUBLIC_API_URL || '',
       botName: process.env.NUXT_PUBLIC_BOT_NAME || '',
+      // вход обкатывается на dev раньше, чем включается на проде
+      featureAuth: process.env.NUXT_PUBLIC_FEATURE_AUTH === 'true',
       appVersion: process.env.NUXT_PUBLIC_APP_VERSION || 'local',
     },
   },

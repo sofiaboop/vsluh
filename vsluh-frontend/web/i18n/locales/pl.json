@@ -60,8 +60,16 @@
     "passwordPlaceholder": "Minimum 6 znaków",
     "submitLogin": "Zaloguj się",
     "submitRegister": "Załóż konto",
+    "submitting": "Wysyłanie…",
     "skip": "Kontynuuj bez logowania",
-    "close": "Zamknij"
+    "close": "Zamknij",
+    "errors": {
+      "invalidCredentials": "Nieprawidłowy e-mail lub hasło",
+      "emailTaken": "Ten e-mail jest już zarejestrowany",
+      "invalidInput": "Sprawdź pola: prawdziwy e-mail i hasło co najmniej 6 znaków",
+      "unavailable": "Logowanie jest chwilowo niedostępne, spróbuj później",
+      "network": "Nie udało się połączyć z serwerem. Spróbuj ponownie"
+    }
   },
   "analysis": {
     "toggle": "Analiza odpowiedzi",

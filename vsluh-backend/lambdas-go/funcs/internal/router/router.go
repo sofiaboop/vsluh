@@ -33,6 +33,15 @@ func Route(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGa
 	case req.HTTPMethod == http.MethodGet && path == "/v1/topics":
 		return handler.ListTopics(ctx)
 
+	case req.HTTPMethod == http.MethodPost && path == "/v1/auth/register":
+		return handler.Register(ctx, req)
+
+	case req.HTTPMethod == http.MethodPost && path == "/v1/auth/login":
+		return handler.Login(ctx, req)
+
+	case req.HTTPMethod == http.MethodGet && path == "/v1/auth/me":
+		return handler.Me(ctx, req)
+
 	case req.HTTPMethod == http.MethodPost && path == "/v1/sessions":
 		return handler.CreateSession(ctx, req)
 

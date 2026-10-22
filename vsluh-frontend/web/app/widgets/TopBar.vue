@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { SUPPORT } from '~/shared/constants/practice'
-import { FEATURES } from '~/shared/constants/features'
 
 const { t } = useI18n()
 const { backToTopics } = usePractice()
 const { isAuthenticated, dialogMode, openAuth, logout } = useAuth()
+const features = useFeatures()
 const supportOpen = ref(false)
 
 function close() {
@@ -30,7 +30,7 @@ onMounted(() => {
     <div class="topbar-actions">
       <LanguagePicker />
 
-      <template v-if="FEATURES.auth">
+      <template v-if="features.auth">
         <button v-if="isAuthenticated" class="auth-nav-button" type="button" @click="logout">
           {{ t('auth.logout') }}
         </button>
@@ -49,7 +49,7 @@ onMounted(() => {
       </template>
 
       <button
-        v-if="FEATURES.support"
+        v-if="features.support"
         class="support-button"
         type="button"
         @click="supportOpen = true"
@@ -59,7 +59,7 @@ onMounted(() => {
     </div>
   </header>
 
-  <AuthDialog v-if="FEATURES.auth && dialogMode" />
+  <AuthDialog v-if="features.auth && dialogMode" />
 
   <Teleport to="body">
     <div v-if="supportOpen" class="support-overlay" @click.self="close">

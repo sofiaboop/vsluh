@@ -64,6 +64,7 @@ jobs:
       - name: Deploy
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets[format('USER_BACKEND_{0}_TELEGRAM_BOT_TOKEN', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
+          AUTH_JWT_SECRET: ${{ secrets[format('USER_BACKEND_{0}_AUTH_JWT_SECRET', env.ENVIRONMENT == 'prod' && 'PROD' || 'DEV')] }}
         run: |
           PARAMS=(
             "ProjectName=$PROJECT_NAME"
@@ -77,6 +78,11 @@ jobs:
             PARAMS+=("TelegramBotToken=$TELEGRAM_BOT_TOKEN")
           else
             echo "::warning::секрет USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_TELEGRAM_BOT_TOKEN не задан, стек поднимается без токена бота"
+          fi
+          if [ -n "$AUTH_JWT_SECRET" ]; then
+            PARAMS+=("AuthJwtSecret=$AUTH_JWT_SECRET")
+          else
+            echo "::warning::секрет USER_BACKEND_$(echo "$ENVIRONMENT" | tr '[:lower:]' '[:upper:]')_AUTH_JWT_SECRET не задан, вход и регистрация будут отвечать 503"
           fi
           sam deploy \
             --stack-name "$PROJECT_NAME-$ENVIRONMENT" \
