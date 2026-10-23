@@ -8,6 +8,7 @@ const { isAuthenticated, dialogMode, giftCredits, buyOpen, credits, userName, op
 const features = useFeatures()
 const supportOpen = ref(false)
 const menuOpen = ref(false)
+const hoverOpened = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
 
 /** Первая буква имени для кружка-аватара: у старых аккаунтов имя может быть пустым. */
@@ -18,6 +19,23 @@ function close() {
 }
 
 function closeMenu() {
+  menuOpen.value = false
+  hoverOpened.value = false
+}
+
+function openMenuByHover() {
+  if (!menuOpen.value) hoverOpened.value = true
+  menuOpen.value = true
+}
+
+/** На тач-экранах перед нажатием прилетает mouseenter, поэтому клик не должен
+ *  закрывать меню, которое открылось наведением прямо перед ним. */
+function toggleMenu() {
+  if (!menuOpen.value || hoverOpened.value) {
+    menuOpen.value = true
+    hoverOpened.value = false
+    return
+  }
   menuOpen.value = false
 }
 
@@ -58,14 +76,14 @@ watch(isAuthenticated, closeMenu)
             <span aria-hidden="true" class="credits-badge-dot" />
             {{ t('credits.badge', { count: credits }) }}
           </span>
-          <div ref="menuRef" class="user-menu" @mouseenter="menuOpen = true" @mouseleave="closeMenu">
+          <div ref="menuRef" class="user-menu" @mouseenter="openMenuByHover" @mouseleave="closeMenu">
             <button
               :aria-expanded="menuOpen"
               :aria-label="userName || t('nav.account')"
               aria-haspopup="menu"
               class="user-menu-button"
               type="button"
-              @click="menuOpen = !menuOpen"
+              @click="toggleMenu"
             >
               <span aria-hidden="true" class="user-menu-avatar">{{ initial }}</span>
               <span class="user-menu-name">{{ userName || t('nav.account') }}</span>
