@@ -3,21 +3,43 @@ import { SUPPORT } from '~/shared/constants/practice'
 
 const { t } = useI18n()
 const { backToTopics } = usePractice()
-const { isAuthenticated, dialogMode, giftCredits, buyOpen, credits, openAuth, logout } = useAuth()
+const { isAuthenticated, dialogMode, giftCredits, buyOpen, credits, userName, openAuth, logout } =
+  useAuth()
 const features = useFeatures()
 const supportOpen = ref(false)
+const menuOpen = ref(false)
+const menuRef = ref<HTMLElement | null>(null)
+
+/** Первая буква имени для кружка-аватара: у старых аккаунтов имя может быть пустым. */
+const initial = computed(() => (userName.value.trim()[0] ?? '?').toUpperCase())
 
 function close() {
   supportOpen.value = false
 }
 
+function closeMenu() {
+  menuOpen.value = false
+}
+
 onMounted(() => {
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') close()
+    if (e.key !== 'Escape') return
+    close()
+    closeMenu()
+  }
+  // На тач-экранах наведения нет, меню открывается нажатием — значит нужен и выход по промаху.
+  const onPointer = (e: PointerEvent) => {
+    if (menuOpen.value && !menuRef.value?.contains(e.target as Node)) closeMenu()
   }
   window.addEventListener('keydown', onKey)
-  onUnmounted(() => window.removeEventListener('keydown', onKey))
+  window.addEventListener('pointerdown', onPointer)
+  onUnmounted(() => {
+    window.removeEventListener('keydown', onKey)
+    window.removeEventListener('pointerdown', onPointer)
+  })
 })
+
+watch(isAuthenticated, closeMenu)
 </script>
 
 <template>
@@ -32,14 +54,31 @@ onMounted(() => {
 
       <template v-if="features.auth">
         <div v-if="isAuthenticated" class="auth-nav">
-          <NuxtLink class="auth-nav-button" to="/history">{{ t('nav.history') }}</NuxtLink>
           <span class="credits-badge" :title="t('credits.hint')">
             <span aria-hidden="true" class="credits-badge-dot" />
             {{ t('credits.badge', { count: credits }) }}
           </span>
-          <button class="auth-nav-button" type="button" @click="logout">
-            {{ t('auth.logout') }}
-          </button>
+          <div ref="menuRef" class="user-menu" @mouseenter="menuOpen = true" @mouseleave="closeMenu">
+            <button
+              :aria-expanded="menuOpen"
+              aria-haspopup="menu"
+              class="user-menu-button"
+              type="button"
+              @click="menuOpen = !menuOpen"
+            >
+              <span aria-hidden="true" class="user-menu-avatar">{{ initial }}</span>
+              <span class="user-menu-name">{{ userName || t('nav.account') }}</span>
+            </button>
+
+            <div v-show="menuOpen" class="user-menu-drop" role="menu">
+              <NuxtLink class="user-menu-item" role="menuitem" to="/history" @click="closeMenu">
+                {{ t('nav.history') }}
+              </NuxtLink>
+              <button class="user-menu-item" role="menuitem" type="button" @click="logout">
+                {{ t('auth.logout') }}
+              </button>
+            </div>
+          </div>
         </div>
         <div v-else class="auth-nav">
           <button class="auth-nav-button" type="button" @click="openAuth('login')">

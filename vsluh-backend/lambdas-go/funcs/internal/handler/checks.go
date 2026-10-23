@@ -236,6 +236,11 @@ func ListChecks(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	if items == nil {
 		items = []domain.Check{}
 	}
+	// Карточка истории проигрывает запись прямо в списке, поэтому ссылку
+	// подписываем сразу: подпись локальная, похода в S3 она не стоит.
+	for i := range items {
+		items[i].AudioURL = audioLink(ctx, items[i].AudioKey)
+	}
 
 	return respondJSON(http.StatusOK, map[string]any{"checks": items, "next_cursor": next})
 }

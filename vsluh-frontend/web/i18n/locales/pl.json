@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Historia",
+  "nav": {
+    "account": "Konto", "brand": "VSLUH", "history": "Historia",
     "home": "Strona główna", "support": "Wesprzyj" },
   "footer": "Praktyka mówienia",
   "language": { "label": "Język", "switch": "Zmień język" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Pełny raport",
+    "report": { "title": "Pełny raport" },
+    "verdict": {
+      "great": "Świetna odpowiedź",
+      "good": "Dobra odpowiedź",
+      "work": "Jest nad czym pracować",
+      "score": "{score} na 100",
+      "focus": {
+        "clean": "Płynna wypowiedź: tempo w normie, prawie bez zbędnych słów.",
+        "slow": "Tempo jest niskie — mów trochę szybciej i pewniej.",
+        "fast": "Tempo jest wysokie — zwolnij i pozwól sobie na pauzy.",
+        "fillers": "Dużo przerywników — zamień je na krótką pauzę.",
+        "repeats": "Dużo powtórzeń — szukaj synonimów.",
+        "pauses": "Długie pauzy — trzymaj myśl i mów dalej bez zawieszania."
+      }
+    },
     "title": "Historia analiz",
     "lead": "Wszystkie sprawdzenia z nagraniami i pomiarami",
     "authCallout": "Zaloguj się, aby zobaczyć historię i statystyki.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Prób łącznie",
+      "overviewHint": "Nagranie, pomiary i werdykt dla każdej próby",
+      "words": "Wypowiedzianych słów",
+      "fillersTotal": "Przerywników łącznie",
+      "fillersAvg": "Przerywników na próbę",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

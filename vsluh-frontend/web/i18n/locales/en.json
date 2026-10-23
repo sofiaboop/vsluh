@@ -1,5 +1,6 @@
 {
   "nav": {
+    "account": "Account",
     "brand": "VSLUH",
     "history": "History",
     "home": "Home",
@@ -129,6 +130,22 @@
     }
   },
   "history": {
+    "details": "Full report",
+    "report": { "title": "Full report" },
+    "verdict": {
+      "great": "Great answer",
+      "good": "Good answer",
+      "work": "Room to improve",
+      "score": "{score} out of 100",
+      "focus": {
+        "clean": "Smooth delivery: the pace is fine and there are almost no extra words.",
+        "slow": "The pace is slow — speak a little faster and more confidently.",
+        "fast": "The pace is fast — slow down and allow yourself pauses.",
+        "fillers": "Lots of filler words — replace them with a short pause.",
+        "repeats": "Lots of repetitions — look for synonyms.",
+        "pauses": "Long pauses — hold the thought and keep going without stalling."
+      }
+    },
     "title": "Analysis history",
     "lead": "All your checks with recordings and measurements",
     "authCallout": "Log in to see your history and statistics.",
@@ -140,7 +157,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Attempts in total",
+      "overviewHint": "A recording, measurements and a verdict for every attempt",
+      "words": "Words spoken",
+      "fillersTotal": "Filler words total",
+      "fillersAvg": "Fillers per attempt",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

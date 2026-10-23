@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Historique",
+  "nav": {
+    "account": "Compte", "brand": "VSLUH", "history": "Historique",
     "home": "Accueil", "support": "Soutenir" },
   "footer": "Pratique de la parole",
   "language": { "label": "Langue", "switch": "Changer de langue" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Rapport complet",
+    "report": { "title": "Rapport complet" },
+    "verdict": {
+      "great": "Excellente réponse",
+      "good": "Bonne réponse",
+      "work": "Encore des progrès à faire",
+      "score": "{score} sur 100",
+      "focus": {
+        "clean": "Débit fluide : le rythme est bon et presque aucun mot superflu.",
+        "slow": "Le rythme est lent — parle un peu plus vite et avec assurance.",
+        "fast": "Le rythme est rapide — ralentis et accorde-toi des pauses.",
+        "fillers": "Beaucoup de mots parasites — remplace-les par une courte pause.",
+        "repeats": "Beaucoup de répétitions — cherche des synonymes.",
+        "pauses": "Longues pauses — garde ton idée et continue sans bloquer."
+      }
+    },
     "title": "Historique des analyses",
     "lead": "Toutes tes analyses avec enregistrements et mesures",
     "authCallout": "Connecte-toi pour voir ton historique et tes statistiques.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Tentatives au total",
+      "overviewHint": "Un enregistrement, des mesures et un verdict pour chaque tentative",
+      "words": "Mots prononcés",
+      "fillersTotal": "Mots parasites au total",
+      "fillersAvg": "Parasites par tentative",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

@@ -33,6 +33,7 @@ func Aggregate(checks []domain.Check, now time.Time) domain.Stats {
 	for _, c := range checks {
 		stats.TotalSpeechSec += c.Metrics.SpeechSec
 		stats.TotalWords += c.Metrics.WordCount
+		stats.TotalFillers += c.Metrics.FillerCount
 
 		if c.Metrics.WordsPerMin > 0 {
 			paceSum += c.Metrics.WordsPerMin
@@ -58,6 +59,7 @@ func Aggregate(checks []domain.Check, now time.Time) domain.Stats {
 	}
 
 	stats.TotalSpeechSec = round1(stats.TotalSpeechSec)
+	stats.AvgFillersPerCheck = round1(float64(stats.TotalFillers) / float64(len(checks)))
 	if paceCount > 0 {
 		stats.AvgWordsPerMin = paceSum / paceCount
 	}

@@ -1709,18 +1709,241 @@ h1 {
   border: 1px solid #0a10200e;
   border-radius: 16px;
   margin-bottom: 10px;
+  padding: 14px;
   overflow: hidden;
 }
 
-.history-item-head {
+.history-item .analysis-audio {
+  margin-top: 12px;
+}
+
+.history-item-more {
+  color: #347fc8;
+  cursor: pointer;
+  background: #f3f6fa;
+  border: 1px solid #0e142414;
+  border-radius: 999px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.16s,
+    color 0.16s;
+}
+
+.history-item-more:hover {
+  color: #276eaf;
+  background: #e8eff8;
+}
+
+.verdict {
+  border: 1px solid #0a10200e;
+  border-radius: 14px;
+  margin-top: 12px;
+  padding: 12px 14px;
+}
+
+.verdict-head {
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+}
+
+.verdict strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.verdict-score {
+  color: #52657b;
+  background: #ffffffa6;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.verdict p {
+  color: #52657b;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.verdict--great {
+  background: #e9f7ef;
+  border-color: #2e9e6b24;
+}
+
+.verdict--great strong {
+  color: #1f7a50;
+}
+
+.verdict--good {
+  background: #eef4fd;
+  border-color: #347fc824;
+}
+
+.verdict--good strong {
+  color: #2d6aa8;
+}
+
+.verdict--work {
+  background: #fdf3ea;
+  border-color: #c9772624;
+}
+
+.verdict--work strong {
+  color: #a9681f;
+}
+
+.overview {
+  background: #ffffff8c;
+  border: 1px solid #0a10200e;
+  border-radius: 20px;
+  margin-top: 22px;
+  padding: 18px;
+}
+
+.overview-head span {
+  color: #7b8aa0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.overview-head strong {
+  color: #1d2a3d;
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  display: block;
+}
+
+.overview-head p {
+  color: #7d8ea4;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.overview .stats-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+.report-dialog {
+  max-width: 440px;
+}
+
+.report-dialog h2 {
+  margin-top: 4px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-button {
+  color: #4b668a;
+  cursor: pointer;
+  background: #ffffff75;
+  border: 1px solid #0e14241a;
+  border-radius: 999px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 13px 5px 5px;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background 0.16s,
+    border-color 0.16s;
+  display: inline-flex;
+}
+
+.user-menu-button:hover {
+  background: #fff;
+  border-color: #347fc83d;
+}
+
+.user-menu-avatar {
+  color: #fff;
+  background: linear-gradient(#7cbcff, #347fc8);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+}
+
+.user-menu-name {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-drop {
+  /* Отступ рисуем паддингом, чтобы курсор не терял меню по дороге к пунктам. */
+  z-index: 20;
+  min-width: 170px;
+  padding-top: 8px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+}
+
+.user-menu-drop:before {
+  content: '';
+  background: #fff;
+  border: 1px solid #0e14241a;
+  border-radius: 16px;
+  position: absolute;
+  inset: 8px 0 0;
+  box-shadow: 0 18px 40px #0e142421;
+}
+
+.user-menu-item {
+  color: #4b668a;
   cursor: pointer;
   text-align: left;
   background: none;
   border: 0;
+  width: 100%;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 0.16s,
+    background 0.16s;
+  display: block;
+  position: relative;
+}
+
+.user-menu-item:first-of-type {
+  border-radius: 15px 15px 0 0;
+}
+
+.user-menu-item:last-of-type {
+  border-radius: 0 0 15px 15px;
+}
+
+.user-menu-item:hover {
+  color: #276eaf;
+  background: #f1f6fc;
+}
+
+.history-item-head {
+  text-align: left;
   flex-direction: column;
   gap: 4px;
-  width: 100%;
-  padding: 14px;
   display: flex;
 }
 
@@ -1740,11 +1963,6 @@ h1 {
 .history-item-meta {
   color: #52657b;
   font-size: 12px;
-}
-
-.history-item-body {
-  border-top: 1px solid #0a102012;
-  padding: 0 14px 14px;
 }
 
 .credits-badge {

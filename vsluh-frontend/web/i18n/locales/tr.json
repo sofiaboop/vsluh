@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Geçmiş",
+  "nav": {
+    "account": "Hesap", "brand": "VSLUH", "history": "Geçmiş",
     "home": "Ana sayfa", "support": "Destek ol" },
   "footer": "Konuşma pratiği",
   "language": { "label": "Dil", "switch": "Dili değiştir" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Tam rapor",
+    "report": { "title": "Tam rapor" },
+    "verdict": {
+      "great": "Harika cevap",
+      "good": "İyi cevap",
+      "work": "Geliştirmeye yer var",
+      "score": "100 üzerinden {score}",
+      "focus": {
+        "clean": "Akıcı konuşma: tempo yerinde, fazladan kelime neredeyse yok.",
+        "slow": "Tempo düşük — biraz daha hızlı ve kendinden emin konuş.",
+        "fast": "Tempo yüksek — yavaşla ve kendine duraklar tanı.",
+        "fillers": "Çok fazla dolgu sözcüğü — onları kısa bir duraklamayla değiştir.",
+        "repeats": "Çok fazla tekrar — eş anlamlılar ara.",
+        "pauses": "Uzun duraklamalar — fikri tut ve takılmadan devam et."
+      }
+    },
     "title": "Analiz geçmişi",
     "lead": "Kayıtlar ve ölçümlerle tüm analizlerin",
     "authCallout": "Geçmişini ve istatistiklerini görmek için giriş yap.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Toplam deneme",
+      "overviewHint": "Her deneme için kayıt, ölçümler ve değerlendirme",
+      "words": "Söylenen kelime",
+      "fillersTotal": "Toplam dolgu sözcüğü",
+      "fillersAvg": "Deneme başına dolgu",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

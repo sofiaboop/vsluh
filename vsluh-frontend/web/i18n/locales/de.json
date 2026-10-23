@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Verlauf",
+  "nav": {
+    "account": "Konto", "brand": "VSLUH", "history": "Verlauf",
     "home": "Startseite", "support": "Unterstützen" },
   "footer": "Sprechpraxis",
   "language": { "label": "Sprache", "switch": "Sprache wechseln" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Vollständiger Bericht",
+    "report": { "title": "Vollständiger Bericht" },
+    "verdict": {
+      "great": "Starke Antwort",
+      "good": "Gute Antwort",
+      "work": "Da geht noch mehr",
+      "score": "{score} von 100",
+      "focus": {
+        "clean": "Flüssiger Vortrag: Tempo passt, kaum überflüssige Wörter.",
+        "slow": "Das Tempo ist niedrig — sprich etwas schneller und sicherer.",
+        "fast": "Das Tempo ist hoch — werde langsamer und gönn dir Pausen.",
+        "fillers": "Viele Füllwörter — ersetze sie durch eine kurze Pause.",
+        "repeats": "Viele Wiederholungen — suche nach Synonymen.",
+        "pauses": "Lange Pausen — halte den Gedanken und sprich ohne Stocken weiter."
+      }
+    },
     "title": "Analyse-Verlauf",
     "lead": "Alle Auswertungen mit Aufnahmen und Messwerten",
     "authCallout": "Melde dich an, um Verlauf und Statistik zu sehen.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Versuche insgesamt",
+      "overviewHint": "Aufnahme, Messwerte und Urteil zu jedem Versuch",
+      "words": "Gesprochene Wörter",
+      "fillersTotal": "Füllwörter gesamt",
+      "fillersAvg": "Füllwörter pro Versuch",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

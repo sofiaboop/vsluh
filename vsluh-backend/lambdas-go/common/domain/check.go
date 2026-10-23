@@ -51,8 +51,12 @@ type Stats struct {
 	TotalChecks    int          `json:"total_checks"`
 	TotalSpeechSec float64      `json:"total_speech_sec"`
 	TotalWords     int          `json:"total_words"`
+	TotalFillers   int          `json:"total_fillers"`
 	AvgWordsPerMin int          `json:"avg_words_per_min"`
-	StreakDays     int          `json:"streak_days"`
+	// AvgFillersPerCheck — сколько слов-паразитов приходится на одну проверку,
+	// с одним знаком после запятой: на коротких ответах целое всегда давало ноль.
+	AvgFillersPerCheck float64 `json:"avg_fillers_per_check"`
+	StreakDays         int     `json:"streak_days"`
 	TopFillers     []FillerWord `json:"top_fillers"`
 	Daily          []DailyPoint `json:"daily"`
 }

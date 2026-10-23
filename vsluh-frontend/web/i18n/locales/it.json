@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Cronologia",
+  "nav": {
+    "account": "Account", "brand": "VSLUH", "history": "Cronologia",
     "home": "Home", "support": "Sostieni" },
   "footer": "Pratica del parlato",
   "language": { "label": "Lingua", "switch": "Cambia lingua" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Rapporto completo",
+    "report": { "title": "Rapporto completo" },
+    "verdict": {
+      "great": "Ottima risposta",
+      "good": "Buona risposta",
+      "work": "C’è da lavorarci",
+      "score": "{score} su 100",
+      "focus": {
+        "clean": "Discorso scorrevole: il ritmo va bene e quasi non ci sono parole in più.",
+        "slow": "Il ritmo è lento: parla un po’ più veloce e con più sicurezza.",
+        "fast": "Il ritmo è alto: rallenta e concediti delle pause.",
+        "fillers": "Molti intercalari: sostituiscili con una breve pausa.",
+        "repeats": "Molte ripetizioni: cerca dei sinonimi.",
+        "pauses": "Pause lunghe: tieni il filo e vai avanti senza bloccarti."
+      }
+    },
     "title": "Cronologia delle analisi",
     "lead": "Tutte le tue analisi con registrazioni e misure",
     "authCallout": "Accedi per vedere la cronologia e le statistiche.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Tentativi in totale",
+      "overviewHint": "Registrazione, misurazioni e verdetto per ogni tentativo",
+      "words": "Parole dette",
+      "fillersTotal": "Intercalari totali",
+      "fillersAvg": "Intercalari per tentativo",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

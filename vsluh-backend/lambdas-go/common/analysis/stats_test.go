@@ -91,6 +91,27 @@ func TestAggregateTopFillers(t *testing.T) {
 	if stats.TopFillers[0].Word != "вот" || stats.TopFillers[0].Count != 6 {
 		t.Fatalf("топ паразитов неверный: %#v", stats.TopFillers)
 	}
+	if stats.TotalFillers != 8 {
+		t.Fatalf("всего паразитов = %d, ожидалось 8", stats.TotalFillers)
+	}
+	if stats.AvgFillersPerCheck != 4 {
+		t.Fatalf("паразитов на проверку = %v, ожидалось 4", stats.AvgFillersPerCheck)
+	}
+}
+
+func TestAggregateRoundsFillersPerCheck(t *testing.T) {
+	// Один паразит на три проверки: целое округление показало бы ноль.
+	checks := []domain.Check{
+		check("2026-10-21", 30, 120, domain.FillerWord{Word: "ну", Count: 1}),
+		check("2026-10-21", 30, 120),
+		check("2026-10-21", 30, 120),
+	}
+
+	stats := Aggregate(checks, time.Date(2026, 10, 21, 12, 0, 0, 0, time.UTC))
+
+	if stats.AvgFillersPerCheck != 0.3 {
+		t.Fatalf("паразитов на проверку = %v, ожидалось 0.3", stats.AvgFillersPerCheck)
+	}
 }
 
 func TestStreakCountsConsecutiveDays(t *testing.T) {

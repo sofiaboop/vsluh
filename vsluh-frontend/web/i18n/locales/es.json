@@ -1,5 +1,6 @@
 {
-  "nav": { "brand": "VSLUH", "history": "Historial",
+  "nav": {
+    "account": "Cuenta", "brand": "VSLUH", "history": "Historial",
     "home": "Inicio", "support": "Apoyar" },
   "footer": "Práctica de habla",
   "language": { "label": "Idioma", "switch": "Cambiar idioma" },
@@ -122,6 +123,22 @@
     }
   },
   "history": {
+    "details": "Informe completo",
+    "report": { "title": "Informe completo" },
+    "verdict": {
+      "great": "Respuesta excelente",
+      "good": "Buena respuesta",
+      "work": "Hay margen de mejora",
+      "score": "{score} de 100",
+      "focus": {
+        "clean": "Discurso fluido: el ritmo está bien y casi no hay palabras de más.",
+        "slow": "El ritmo es lento: habla un poco más rápido y con más seguridad.",
+        "fast": "El ritmo es rápido: baja la velocidad y date pausas.",
+        "fillers": "Muchas muletillas: cámbialas por una pausa corta.",
+        "repeats": "Muchas repeticiones: busca sinónimos.",
+        "pauses": "Pausas largas: sostén la idea y sigue sin quedarte en blanco."
+      }
+    },
     "title": "Historial de análisis",
     "lead": "Todas tus revisiones con grabaciones y métricas",
     "authCallout": "Inicia sesión para ver tu historial y tus estadísticas.",
@@ -133,7 +150,11 @@
     "noTopic": "No topic",
     "fillersShort": "fillers: {count}",
     "stats": {
-      "checks": "Analyses",
+      "overview": "Intentos en total",
+      "overviewHint": "Grabación, mediciones y veredicto de cada intento",
+      "words": "Palabras dichas",
+      "fillersTotal": "Muletillas en total",
+      "fillersAvg": "Muletillas por intento",
       "minutes": "Minutes spoken",
       "pace": "Average pace",
       "streak": "Day streak",

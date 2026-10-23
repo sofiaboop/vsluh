@@ -45,7 +45,9 @@ export interface Stats {
   totalChecks: number
   totalSpeechSec: number
   totalWords: number
+  totalFillers: number
   avgWordsPerMin: number
+  avgFillersPerCheck: number
   streakDays: number
   topFillers: FillerWord[]
   daily: DailyPoint[]
@@ -81,7 +83,9 @@ interface StatsPayload {
   total_checks: number
   total_speech_sec: number
   total_words: number
+  total_fillers: number
   avg_words_per_min: number
+  avg_fillers_per_check: number
   streak_days: number
   top_fillers: FillerWord[] | null
   daily: DailyPoint[] | null
@@ -157,7 +161,9 @@ export async function fetchStats(): Promise<Stats> {
     totalChecks: payload.stats.total_checks,
     totalSpeechSec: payload.stats.total_speech_sec,
     totalWords: payload.stats.total_words,
+    totalFillers: payload.stats.total_fillers ?? 0,
     avgWordsPerMin: payload.stats.avg_words_per_min,
+    avgFillersPerCheck: payload.stats.avg_fillers_per_check ?? 0,
     streakDays: payload.stats.streak_days,
     topFillers: payload.stats.top_fillers ?? [],
     daily: payload.stats.daily ?? [],
