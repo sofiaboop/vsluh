@@ -61,6 +61,7 @@ watch(isAuthenticated, closeMenu)
           <div ref="menuRef" class="user-menu" @mouseenter="menuOpen = true" @mouseleave="closeMenu">
             <button
               :aria-expanded="menuOpen"
+              :aria-label="userName || t('nav.account')"
               aria-haspopup="menu"
               class="user-menu-button"
               type="button"

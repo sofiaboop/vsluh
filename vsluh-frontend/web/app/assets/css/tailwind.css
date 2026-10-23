@@ -2536,8 +2536,19 @@ h1 {
   }
 
   .lang-code,
-  .auth-nav-button--register {
+  .auth-nav-button--register,
+  .user-menu-name {
     display: none;
+  }
+
+  /* Без имени кнопка аккаунта становится кружком вокруг аватара. */
+  .user-menu-button {
+    padding: 5px;
+  }
+
+  .credits-badge {
+    gap: 6px;
+    padding: 8px 11px;
   }
 
   .lang-button {
